@@ -8,7 +8,7 @@ RTCP为您打造实时视频传输体验，支持秒开，集成简单，几行�
 - 三端互通
 
 #### 截图
-
+![enter image description here](https://github.com/AnyRTC/anyRTC-RTCP-iOS/blob/master/RTCP.gif)
 #### app体验
 
 ##### 扫码下载
