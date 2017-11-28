@@ -4,13 +4,15 @@ anyRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，
 支持Android,Ios,Web，实时直播无延迟。
 
 ### 项目展示
-![image](https://github.com/AnyRTC/anyRTC-RTCP-iOS/blob/master/RTCP.gif)
+![image](https://github.com/AnyRTC/anyRTC-RTCP-Android/blob/master/images/rtcp1.jpg)
+![image](https://github.com/AnyRTC/anyRTC-RTCP-Android/blob/master/images/rtcp2.jpg)
+![image](https://github.com/AnyRTC/anyRTC-RTCP-Android/blob/master/images/rtcp3.jpg)
 
 ### app体验
 
 ##### 扫码下载
-![image](https://github.com/AnyRTC/anyRTC-RTCP-Android/blob/master/download_qrcode.png)
-##### [点击下载](https://www.pgyer.com/anyrtc_rtcp1)
+![image](https://github.com/AnyRTC/anyRTC-RTCP-Android/blob/master/images/demo_qrcode.png)
+##### [点击下载](https://www.pgyer.com/app/qrcode/anyrtc_rtcp1)
 ##### [WEB在线体验](https://www.anyrtc.cc/demo/rtcp)
 
 ### 安装
