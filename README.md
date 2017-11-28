@@ -9,8 +9,8 @@ anyRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，
 ### app体验
 
 ##### 扫码下载
-![enter image description here](https://www.pgyer.com/app/qrcode/anyrtc_rtcp1)
-##### [点击下载](https://www.pgyer.com/app/qrcode/anyrtc_rtcp1)
+![image](https://github.com/AnyRTC/anyRTC-RTCP-Android/blob/master/download_qrcode.png)
+##### [点击下载](https://www.pgyer.com/anyrtc_rtcp1)
 ##### [WEB在线体验](https://www.anyrtc.cc/demo/rtcp)
 
 ### 安装
