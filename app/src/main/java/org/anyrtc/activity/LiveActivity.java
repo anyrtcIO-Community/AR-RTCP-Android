@@ -84,7 +84,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             //设置本地视频采集
             rtcpKit.setLocalVideoCapturer(rtcVideoView.OnRtcOpenLocalRender().GetRenderPointer());
             //发布
-            rtcpKit.publish((int) ((Math.random() * 9 + 1) * 100000) + "");
+            rtcpKit.publish((int) ((Math.random() * 9 + 1) * 100000) + "",false);
         } else {
             //订阅媒体
             strPeerId = getIntent().getStringExtra("id");
@@ -114,7 +114,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
          * @param strRtcpId 发布媒体id
          */
         @Override
-        public void onPublishOK(final String strRtcpId) {
+        public void onPublishOK(final String strRtcpId,String strLiveInfo) {
             LiveActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
