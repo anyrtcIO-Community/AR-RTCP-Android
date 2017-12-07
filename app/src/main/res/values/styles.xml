@@ -16,4 +16,10 @@
         <item name="android:windowBackground">@drawable/splash</item>
         <item name="android:windowFullscreen">true</item>
     </style>
+    <style name="dialog_live_style" mce_bogus="1" parent="android:Animation">
+        <item name="@android:windowEnterAnimation">@anim/anim_dialog_show</item>
+        <!-- 进入时的动画 -->
+        <item name="@android:windowExitAnimation">@anim/anim_dialog_hide</item>
+        <!-- 退出时的动画 -->
+    </style>
 </resources>

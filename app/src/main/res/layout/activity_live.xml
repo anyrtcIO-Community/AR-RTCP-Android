@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.anyrtc.activity.LiveActivity">
+    tools:context="org.anyrtc.LiveActivity">
 
     <RelativeLayout
         android:id="@+id/rl_video"
@@ -48,10 +48,19 @@
                 android:id="@+id/btn_share"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                android:layout_marginRight="12dp"
+                android:background="@null"
+                android:layout_toLeftOf="@+id/btn_qr_code"
+                android:src="@drawable/img_share" />
+
+            <ImageButton
+                android:id="@+id/btn_qr_code"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="12dp"
                 android:background="@null"
-                android:src="@drawable/img_share" />
+                android:src="@drawable/iv_qrcode" />
         </RelativeLayout>
 
         <TextView

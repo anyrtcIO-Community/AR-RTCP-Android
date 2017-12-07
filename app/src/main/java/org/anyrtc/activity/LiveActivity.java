@@ -4,11 +4,14 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.ClipboardManager;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,10 +28,12 @@ import org.anyrtc.rtcp_kit.AnyRTCRTCPEvent;
 import org.anyrtc.rtcp_kit.AnyRTCRTCPOption;
 import org.anyrtc.rtcp_kit.RtcpKit;
 import org.anyrtc.weight.RTCVideoView;
+import org.anyrtc.zxing.utils.CustomDialog;
+import org.anyrtc.zxing.utils.QRCode;
 
 public class LiveActivity extends BaseActivity implements View.OnClickListener {
 
-    ImageButton ibHangUp, ibCamera, ibShare;
+    ImageButton ibHangUp, ibCamera, ibShare,btn_qr_code;
     TextView tv_status;
     View Space;
     RelativeLayout rl_video;
@@ -37,9 +42,16 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
     private String strPeerId = "";
     boolean isPublish;
     private AnyRTCAudioManager mRtcAudioManager = null;
+    private CustomDialog customDialog;
     @Override
     public int getLayoutId() {
         return R.layout.activity_live;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); //保持屏幕常亮
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -51,6 +63,8 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         ibShare = (ImageButton) findViewById(R.id.btn_share);
         rl_video = (RelativeLayout) findViewById(R.id.rl_video);
         tv_status = (TextView) findViewById(R.id.tv_status);
+        btn_qr_code= (ImageButton) findViewById(R.id.btn_qr_code);
+        btn_qr_code.setOnClickListener(this);
         ibHangUp.setOnClickListener(this);
         ibCamera.setOnClickListener(this);
         ibShare.setOnClickListener(this);
@@ -73,7 +87,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         //获取配置类
         AnyRTCRTCPOption anyRTCRTCPOption = AnyRTCRTCPEngine.Inst().getAnyRTCRTCPOption();
         //设置前后置摄像头 视频横竖屏 视频质量 视频图像排列方式 发布媒体类型
-        anyRTCRTCPOption.setOptionParams(false,AnyRTCScreenOrientation.AnyRTC_SCRN_Portrait,AnyRTCVideoMode.AnyRTC_Video_HD,AnyRTCVideoLayout.AnyRTC_V_3X3_auto,AnyRTCCommonMediaType.AnyRTC_M_Video);
+        anyRTCRTCPOption.setOptionParams(false, AnyRTCScreenOrientation.AnyRTC_SCRN_Portrait, AnyRTCVideoMode.AnyRTC_Video_HD, AnyRTCVideoLayout.AnyRTC_V_3X3_auto, AnyRTCCommonMediaType.AnyRTC_M_Video);
        //获取RTCP对象
         rtcpKit = RtcpCore.Inst().getmRtcpKit();
         //设置回调监听
@@ -249,11 +263,32 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                 // 将文本内容放到系统剪贴板里。
                 peerid.setText(strPeerId);
                 Toast.makeText(this, "直播室ID已复制到剪贴板~", Toast.LENGTH_SHORT).show();
+
+                break;
+            case R.id.btn_qr_code:
+                showQRcodeDialog();
                 break;
         }
     }
 
 
+    private void showQRcodeDialog(){
+        CustomDialog.Builder builder = new CustomDialog.Builder(LiveActivity.this);
+        customDialog = builder.setContentView(R.layout.qr_code)
+                .setCancelable(true)
+                .setGravity(Gravity.CENTER)
+                .setAnimId(R.style.dialog_live_style)
+                .setBackgroundDrawable(true)
+                .show(new CustomDialog.Builder.onInitListener() {
+                    @Override
+                    public void init(CustomDialog customDialog) {
+                        ImageView iv= (ImageView) customDialog.findViewById(R.id.iv_code);
+                        if (null!=iv&& !TextUtils.isEmpty(strPeerId)) {
+                            iv.setImageBitmap(QRCode.createQRCode(strPeerId));
+                        }
+                    }
+                });
+    }
 
     @Override
     protected void onDestroy() {
@@ -278,11 +313,5 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             return true;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); //保持屏幕常亮
-        super.onCreate(savedInstanceState);
     }
 }
