@@ -16,9 +16,51 @@ anyRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，
 ##### [WEB在线体验](https://www.anyrtc.cc/demo/rtcp)
 
 ### SDK集成
+# > 方式一（推荐）
+
+添加Jcenter仓库 Gradle依赖：
+
 ```
-compile 'org.anyrtc:rtcp_kit:2.1'
+dependencies {
+   compile 'org.anyrtc:rtcp_kit:2.1'
+}
 ```
+
+或者 Maven
+```
+<dependency>
+  <groupId>org.anyrtc</groupId>
+  <artifactId>rtcp_kit</artifactId>
+  <version>2.1</version>
+  <type>pom</type>
+</dependency>
+```
+
+>方式二
+
+ [下载aar SDK](https://www.anyrtc.io/resoure)
+
+>1. 将下载好的rtcp-release.aar文件放入项目的libs目录中
+>2. 在Model下的build.gradle文件添加如下代码依赖rtcp SDK
+
+```
+android
+{
+
+ repositories {
+        flatDir {dirs 'libs'}
+    }
+    
+ }
+    
+```
+```
+dependencies {
+    compile(name: 'rtcp-release', ext: 'aar')
+}
+```
+
+
 ### 安装
 
 ##### 编译环境
