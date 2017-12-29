@@ -26,7 +26,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile(name:'rtcp_kit-release',ext:'aar')
+    compile 'org.anyrtc:rtcp_kit:2.1'
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.yanzhenjie:permission:1.1.0'
     compile 'com.google.zxing:core:3.3.0'
