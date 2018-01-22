@@ -16,13 +16,13 @@ anyRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，
 ##### [WEB在线体验](https://www.anyrtc.cc/demo/rtcp)
 
 ### SDK集成
-# > 方式一（推荐）
+# > 方式一（推荐）[ ![Download](https://api.bintray.com/packages/dyncanyrtc/anyrtc_dev/anyRTC-RTCP-Android/images/download.svg) ](https://bintray.com/dyncanyrtc/anyrtc_dev/anyRTC-RTCP-Android/_latestVersion)
 
 添加Jcenter仓库 Gradle依赖：
 
 ```
 dependencies {
-   compile 'org.anyrtc:rtcp_kit:2.1'
+   compile 'org.anyrtc:rtcp_kit:2.1'//最新版本见上面Download
 }
 ```
 
