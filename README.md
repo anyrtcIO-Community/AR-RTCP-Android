@@ -15,6 +15,52 @@ anyRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，
 ##### [点击下载](https://www.pgyer.com/app/qrcode/anyrtc_rtcp1)
 ##### [WEB在线体验](https://www.anyrtc.cc/demo/rtcp)
 
+### SDK集成
+# > 方式一（推荐）[ ![Download](https://api.bintray.com/packages/dyncanyrtc/anyrtc_dev/anyRTC-RTCP-Android/images/download.svg) ](https://bintray.com/dyncanyrtc/anyrtc_dev/anyRTC-RTCP-Android/_latestVersion)
+
+添加Jcenter仓库 Gradle依赖：
+
+```
+dependencies {
+   compile 'org.anyrtc:rtcp_kit:2.1'//最新版本见上面Download
+}
+```
+
+或者 Maven
+```
+<dependency>
+  <groupId>org.anyrtc</groupId>
+  <artifactId>rtcp_kit</artifactId>
+  <version>2.1</version>
+  <type>pom</type>
+</dependency>
+```
+
+>方式二
+
+ [下载aar SDK](https://www.anyrtc.io/resoure)
+
+>1. 将下载好的rtcp-release.aar文件放入项目的libs目录中
+>2. 在Model下的build.gradle文件添加如下代码依赖rtcp SDK
+
+```
+android
+{
+
+ repositories {
+        flatDir {dirs 'libs'}
+    }
+    
+ }
+    
+```
+```
+dependencies {
+    compile(name: 'rtcp-release', ext: 'aar')
+}
+```
+
+
 ### 安装
 
 ##### 编译环境
@@ -68,13 +114,13 @@ SDK集成，API介绍，详见官方完整文档：[点击查看](https://www.an
 4. 常见错误代码请参考[错误码查询](https://www.anyrtc.io/resoure)
 
 ### 商业授权
-程序发布需商用授权，业务咨询请联系 QQ:984630262 
+程序发布需商用授权，业务咨询请联系 QQ:580477436
 
-QQ交流群:580477436
+QQ交流群:554714720
 
-联系电话:021-65650071
+联系电话:021-65650071-839
 
-Email:zhangjianqiang@dync.cc
+Email:hi@dync.cc
 
 ### 技术支持 
 - anyRTC官方网址：[https://www.anyrtc.io](https://www.anyrtc.io/resoure)
