@@ -222,7 +222,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                     Log.d("RTCP", "OnRTCCloseVideoRender:" + strLivePeerId);
                     if (rtcpKit!=null){
                         rtcpKit.setRTCVideoRender(strLivePeerId,0);
-                        rtcVideoView.OnRtcOpenRemoteRender(strLivePeerId);
+                        rtcVideoView.OnRtcRemoveRemoteRender(strLivePeerId);
                         finishAnimActivity();
                     }
                 }

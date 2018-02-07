@@ -773,7 +773,7 @@ public class RTCVideoView implements RTCViewHelper, View.OnTouchListener {
             mRemoteRenders.put(strRtcPeerId, remoteRender);
             updateVideoView();
             updateImageFlag();
-            if (isHost || (!isHost && strRtcPeerId.equals("LocalCameraRender"))) {
+            if (isHost || (!isHost && strRtcPeerId.equals("localRender"))) {
 //                remoteRender.btnClose.setVisibility(View.VISIBLE);
                 if (!isHost) {
                     remoteRender.layoutCamera.setOnClickListener(new View.OnClickListener() {
