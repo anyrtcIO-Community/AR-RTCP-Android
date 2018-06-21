@@ -20,7 +20,7 @@ import org.anyrtc.RtcpCore;
 import org.anyrtc.common.enums.AnyRTCCommonMediaType;
 import org.anyrtc.common.enums.AnyRTCScreenOrientation;
 import org.anyrtc.common.enums.AnyRTCVideoLayout;
-import org.anyrtc.common.enums.AnyRTCVideoMode;
+import org.anyrtc.common.enums.AnyRTCVideoQualityMode;
 import org.anyrtc.common.utils.AnyRTCAudioManager;
 import org.anyrtc.rtcp.R;
 import org.anyrtc.rtcp_kit.AnyRTCRTCPEngine;
@@ -87,7 +87,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         //获取配置类
         AnyRTCRTCPOption anyRTCRTCPOption = AnyRTCRTCPEngine.Inst().getAnyRTCRTCPOption();
         //设置前后置摄像头 视频横竖屏 视频质量 视频图像排列方式 发布媒体类型
-        anyRTCRTCPOption.setOptionParams(false, AnyRTCScreenOrientation.AnyRTC_SCRN_Portrait, AnyRTCVideoMode.AnyRTC_Video_HD, AnyRTCVideoLayout.AnyRTC_V_3X3_auto, AnyRTCCommonMediaType.AnyRTC_M_Video);
+        anyRTCRTCPOption.setOptionParams(false, AnyRTCScreenOrientation.AnyRTC_SCRN_Portrait, AnyRTCVideoQualityMode.AnyRTCVideoQuality_Medium2, AnyRTCVideoLayout.AnyRTC_V_3X3_auto, AnyRTCCommonMediaType.AnyRTC_M_Video);
        //获取RTCP对象
         rtcpKit = RtcpCore.Inst().getmRtcpKit();
         //设置回调监听
