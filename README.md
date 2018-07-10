@@ -26,7 +26,7 @@ anyRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，
 
 ```
 dependencies {
-   compile 'org.anyrtc:rtcp_kit:2.1'//最新版本见上面Download
+   compile 'org.anyrtc:rtcp_kit:2.1.4'//最新版本见上面Download
 }
 ```
 
