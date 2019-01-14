@@ -228,6 +228,31 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                 }
             });
         }
+
+        @Override
+        public void onRTCOpenAudioTrack(String strRtcpId, String strUserId) {
+
+        }
+
+        @Override
+        public void onRTCCloseAudioTrack(String strRtcpId, String strUserId) {
+
+        }
+
+        @Override
+        public void onRTCAVStatus(String strRtcpId, boolean bAudio, boolean bVideo) {
+
+        }
+
+        @Override
+        public void onRTCAudioActive(String strRtcpId, String strUserId, int nLevel, int nTime) {
+
+        }
+
+        @Override
+        public void onRTCNetworkStatus(String strRtcpId, String strUserId, int nNetSpeed, int nPacketLost) {
+
+        }
     };
 
 
