@@ -1,0 +1,109 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/capture_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white" >
+    <SurfaceView
+        android:id="@+id/capture_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <!-- 扫描框上面的布局 -->
+    <RelativeLayout
+        android:id="@+id/top_mask"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_alignParentTop="true"
+        android:background="#7f000000">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="24dp"
+            android:layout_height="48dp">
+
+            <ImageView
+                android:id="@+id/iv_top_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:src="@drawable/back_white"/>
+
+            <TextView
+                android:id="@+id/tv_top_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:text="扫一扫"
+                android:textColor="#ffffff"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <!-- 扫描框中间的布局 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.9"
+        >
+        <ImageView
+            android:id="@+id/left_mask"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="#7f000000"
+            />
+
+        <RelativeLayout
+            android:id="@+id/capture_crop_view"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent" >
+            <ImageView
+                android:id="@+id/capture_scan_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/qrcode_line"
+              />
+            <org.anyrtc.arrtcp.zxing.MyImageView
+                android:id="@+id/scan_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </RelativeLayout>
+        <ImageView
+            android:id="@+id/right_mask"
+            android:layout_width="0dp"
+            android:layout_weight="0.9"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="#7f000000" />
+    </LinearLayout>
+        <!-- 扫描框底部的布局 -->
+        <RelativeLayout
+            android:id="@+id/bottom_mask"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#7f000000"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

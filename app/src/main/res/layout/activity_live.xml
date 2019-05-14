@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+
+        android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rl_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/view_space"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"></View>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_meet_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="实时直播间"
+                android:layout_margin="12dp"
+                android:paddingRight="12dp"
+                android:background="@drawable/shape_index_solid_button"
+                android:gravity="center_vertical"
+                android:paddingLeft="12dp"
+                android:textColor="#ffffff" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_meet_mode"
+                android:textColor="#33B15D" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="12dp"
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/btn_camare"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@null"
+                    android:src="@drawable/img_camera_host_normol"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/btn_share"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@null"
+                    android:layout_marginTop="12dp"
+                    android:src="@drawable/img_share" />
+
+                <ImageButton
+                    android:id="@+id/btn_qr_code"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@null"
+                    android:layout_marginTop="12dp"
+                    android:src="@drawable/iv_qrcode" />
+
+                <ImageButton
+                    android:id="@+id/btn_scan"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@null"
+                    android:src="@drawable/img_add"
+                    android:visibility="gone"
+                    android:layout_marginTop="12dp"
+                    />
+
+                <ImageButton
+                    android:id="@+id/btn_log"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@null"
+                    android:src="@drawable/img_log"
+                    android:layout_marginTop="12dp"
+                    />
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/ib_leave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="36dp"
+        android:background="@null"
+        android:drawableTop="@drawable/hang_up"
+        android:text="挂断"
+        android:drawablePadding="12dp"
+        android:textColor="#ffffff"/>
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/rl_log_layout"
+        android:layout_width="match_parent"
+        android:background="@color/alpha_90_white"
+        android:paddingTop="25dp"
+        android:visibility="gone"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#333333"
+            android:textStyle="bold"
+            android:layout_marginLeft="12dp"
+            android:textSize="26sp"
+            android:text="日志"/>
+
+        <ImageButton
+            android:id="@+id/ibtn_close_log"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img_guanbi"
+            android:background="@null"
+            android:padding="12dp"
+            android:layout_alignParentRight="true"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_log"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ibtn_close_log"
+            android:layout_marginTop="12dp"></android.support.v7.widget.RecyclerView>
+
+    </RelativeLayout>
+
+</FrameLayout>

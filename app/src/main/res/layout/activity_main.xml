@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/img_bg">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableTop="@drawable/iv_logo"
+            android:text="anyRTC实时直播体验DEMO"
+            android:layout_marginTop="40dp"
+            android:textColor="#CCCCCC"
+            android:textSize="12sp" />
+
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+
+
+
+        <Button
+            android:id="@+id/tv_open_live"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginLeft="42dp"
+            android:layout_marginRight="42dp"
+            android:gravity="center"
+            android:text="开启直播"
+            android:background="@drawable/shape_index_button"
+            android:textColor="#FFFFFF" />
+
+
+        <Button
+            android:id="@+id/tv_watch_live"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_above="@+id/tv_back"
+            android:layout_marginBottom="12dp"
+            android:layout_marginLeft="42dp"
+            android:layout_marginRight="42dp"
+            android:background="@drawable/shape_index_button"
+            android:gravity="center"
+            android:text="扫码观看"
+            android:textColor="#FFFFFF" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+
+    </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tv_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="12dp"
+            android:text="技术支持：hi@dync.cc"
+            android:textColor="#CCCCCC"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/tv_call"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="6sp"
+            android:text="v3.0.0"
+            android:textColor="#CCCCCC"
+            android:textSize="12sp" />
+
+    </RelativeLayout>
+</LinearLayout>
