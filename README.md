@@ -1,67 +1,37 @@
-### 更新日志
-2018-6-21
-1：更新最新版SDK
 
-### anyRTCP SDK for Android
+### ARRTCP SDK for Android
 ### 简介
-anyRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，几行代码即可拥有音视频能力。
+ARRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，几行代码即可拥有音视频能力。
 支持Android,Ios,Web，实时直播无延迟。
 
-### 项目展示
-![image](https://github.com/AnyRTC/anyRTC-RTCP-Android/blob/master/images/rtcp1.jpg)
-![image](https://github.com/AnyRTC/anyRTC-RTCP-Android/blob/master/images/rtcp2.jpg)
-![image](https://github.com/AnyRTC/anyRTC-RTCP-Android/blob/master/images/rtcp3.jpg)
+
 
 ### app体验
 
 ##### 扫码下载
-![image](https://github.com/AnyRTC/anyRTC-RTCP-Android/blob/master/images/demo_qrcode.png)
-##### [点击下载](https://www.pgyer.com/app/qrcode/anyrtc_rtcp1)
-##### [WEB在线体验](https://www.anyrtc.cc/demo/rtcp)
+![image](https://www.pgyer.com/app/qrcode/so6a)
+##### [点击下载](https://www.pgyer.com/so6a)
+##### [WEB在线体验](https://beyond.anyrtc.cc/demo/rtcp)
 
 ### SDK集成
-# > 方式一（推荐）[ ![Download](https://api.bintray.com/packages/dyncanyrtc/anyrtc_dev/anyRTC-RTCP-Android/images/download.svg) ](https://bintray.com/dyncanyrtc/anyrtc_dev/anyRTC-RTCP-Android/_latestVersion)
+# > 方式一 [ ![Download](https://api.bintray.com/packages/dyncanyrtc/ar_dev/rtcp/images/download.svg) ](https://bintray.com/dyncanyrtc/ar_dev/rtcp/_latestVersion)
 
 添加Jcenter仓库 Gradle依赖：
 
 ```
 dependencies {
-   compile 'org.anyrtc:rtcp_kit:2.1.4'//最新版本见上面Download
+  compile 'org.ar:rtcp_kit:3.0.1'
 }
 ```
 
 或者 Maven
 ```
 <dependency>
-  <groupId>org.anyrtc</groupId>
+  <groupId>org.ar</groupId>
   <artifactId>rtcp_kit</artifactId>
-  <version>2.1</version>
+  <version>3.0.1</version>
   <type>pom</type>
 </dependency>
-```
-
->方式二
-
- [下载aar SDK](https://www.anyrtc.io/resoure)
-
->1. 将下载好的rtcp-release.aar文件放入项目的libs目录中
->2. 在Model下的build.gradle文件添加如下代码依赖rtcp SDK
-
-```
-android
-{
-
- repositories {
-        flatDir {dirs 'libs'}
-    }
-    
- }
-    
-```
-```
-dependencies {
-    compile(name: 'rtcp-release', ext: 'aar')
-}
 ```
 
 
@@ -84,24 +54,24 @@ Android API 16+
 
 ##### 替换开发者账号
 在[anyRTC官网](http://www.anyrtc.io)获取了开发者账号，AppID等信息后，替换DEMO中
-**RTCPApplication**类中的开发者信息即可
+**DeveloperInfo**类中的开发者信息即可
 
 ### 操作步骤
 
-1、一部手机开启直播，点击右上角复制按钮，将复制的内容发送给另一部手机；
+1、一部手机开启直播，点击右上角展示二维码按钮。
 
-2、另一部手机复制，点击观看直播，粘贴复制的内容到输入框，开始观看直播。
+2、另一部手机复制，点击观看直播，扫码，开始观看直播。
 
 ### 完整文档
-SDK集成，API介绍，详见官方完整文档：[点击查看](https://www.anyrtc.io/resoure)
+SDK集成，API介绍，详见官方完整文档：[点击查看](https://docs.anyrtc.io/v1/RTCP/android.html)
 
-### Ios版anyRTC-RTCP实时直播
+### iOS版RTCP实时直播
 
-[anyRTC-RTCP-Ios](https://github.com/AnyRTC/anyRTC-RTCP-iOS)
+[AR-RTCP-iOS](https://github.com/AnyRTC/anyRTC-RTCP-iOS)
 
-### Web版anyRTC-RTCP实时直播在线体验
+### Web版RTCP实时直播
 
-[anyRTC-RTCP-Web](https://www.anyrtc.io/demo/rtcp)
+[AR-RTCP-Web](https://github.com/anyRTC/anyRTC-RTCP-Web)
 
 
 ### 支持的系统平台
