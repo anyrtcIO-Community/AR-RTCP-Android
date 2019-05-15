@@ -5,21 +5,12 @@ package org.anyrtc.arrtcp;
  */
 public class DeveloperInfo {
 
-    /**
-     * anyRTC 平台的开发者ID
-     */
-
-    public final static String DEVELOPERID = "";
 
     /**
      * anyRTC 平台的appid
      */
     public final static String APPID = "";
 
-    /**
-     * anyRTC 平台的appkey
-     */
-    public final static String APPKEY = "";
 
     /**
      * anyRTC 平台的apptoken
