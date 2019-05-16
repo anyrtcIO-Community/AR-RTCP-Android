@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     buildToolsVersion '27.0.3'
     defaultConfig {
-        applicationId "org.anyrtc.arrtcp"
+        applicationId "org.ar.arrtcp"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
@@ -27,7 +27,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:28.0.0'
-    compile(name: 'rtcp-release', ext: 'aar')
+    compile 'org.ar:rtcp_kit:3.0.1'
     compile 'com.yanzhenjie.permission:support:2.0.1'
     compile 'com.google.zxing:core:3.3.0'
     compile 'com.gyf.barlibrary:barlibrary:2.3.0'
