@@ -356,6 +356,7 @@ public class ARVideoView implements View.OnTouchListener{
             int size = getVideoRenderSize();
             if (size == 0) {
                 remoteVideoRender = new VideoView(videoId, rlVideoGroup.getContext(), eglBase, 0, 0, 0, 100, 100);
+                remoteVideoRender.surfaceViewRenderer.setZOrderMediaOverlay(false);
             } else {
                 remoteVideoRender = new VideoView(videoId, rlVideoGroup.getContext(), eglBase, size, 0, 0, 0, 0);
                 remoteVideoRender.surfaceViewRenderer.setZOrderMediaOverlay(true);
@@ -672,8 +673,13 @@ public class ARVideoView implements View.OnTouchListener{
             while (iter.hasNext()) {
                 Map.Entry<String, VideoView> entry = iter.next();
                 VideoView render = entry.getValue();
-                if (render.index == 1) {
-                    render.mLayout.setPosition(0, 0, 100, 100);
+                if (render.index == 0) {
+                    if (render.videoId.startsWith("X100")){
+                        render.mLayout.setPosition(0, (100-27)/2, 100, 27);
+                    }else {
+                        render.mLayout.setPosition(0, 0, 100, 100);
+                    }
+
                     render.surfaceViewRenderer.requestLayout();
                 }
             }
@@ -682,11 +688,22 @@ public class ARVideoView implements View.OnTouchListener{
             while (iter.hasNext()) {
                 Map.Entry<String, VideoView> entry = iter.next();
                 VideoView render = entry.getValue();
-                if (render.index == 1) {
-                    render.mLayout.setPosition(0, 0, 100, 50);
+                if (render.index == 0) {
+                    if (render.videoId.startsWith("X100")){
+                        render.mLayout.setPosition(0, (100-27)/2, 100, 27);
+                    }else {
+                        render.mLayout.setPosition(0, 0, 100, 100);
+                    }
+                    render.surfaceViewRenderer.setZOrderMediaOverlay(false);
                     render.surfaceViewRenderer.requestLayout();
                 }else {
-                    render.mLayout.setPosition(0, 50, 100, 50);
+                    if (render.videoId.startsWith("X100")){
+                        render.mLayout.setPosition(25, 65, 50, 14);
+                    }else {
+                        render.mLayout.setPosition(40, 65, 20, 15);
+                    }
+
+                    render.surfaceViewRenderer.setZOrderMediaOverlay(true);
                     render.surfaceViewRenderer.requestLayout();
                 }
             }

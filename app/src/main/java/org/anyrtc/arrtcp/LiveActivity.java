@@ -393,6 +393,10 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
 
                 break;
             case R.id.btn_scan:
+                if (rtcpIDList.size()==2){
+                    Toast.makeText(LiveActivity.this, "DEMO演示，仅展示订阅两路流", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent i=new Intent(this,ScanActivity.class);
                 i.putExtra("isFirstScan",false);
                 startActivityForResult(i,100);

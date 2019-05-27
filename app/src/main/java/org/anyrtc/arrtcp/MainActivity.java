@@ -26,9 +26,9 @@ public class MainActivity extends BaseActivity {
     @Override
     public void initView(Bundle savedInstanceState) {
         ImmersionBar.with(this).statusBarDarkFont(true,0.2f).init();
-        findViewById(R.id.tv_open_live).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.tv_open_live).setOnClickListener(new PerfectClickListener() {
             @Override
-            public void onClick(View view) {
+            protected void onNoDoubleClick(View v){
 
                 if (AndPermission.hasPermissions(MainActivity.this, Permission.CAMERA, Permission.RECORD_AUDIO)) {
                     startAnimActivity(LiveActivity.class, "isPublish", true);
@@ -48,9 +48,9 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        findViewById(R.id.tv_watch_live).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.tv_watch_live).setOnClickListener(new PerfectClickListener() {
             @Override
-            public void onClick(View view) {
+            protected void onNoDoubleClick(View v) {
                 if (AndPermission.hasPermissions(MainActivity.this, Permission.CAMERA, Permission.RECORD_AUDIO)) {
                     Intent i = new Intent(MainActivity.this, ScanActivity.class);
                     i.putExtra("isFirstScan", true);
