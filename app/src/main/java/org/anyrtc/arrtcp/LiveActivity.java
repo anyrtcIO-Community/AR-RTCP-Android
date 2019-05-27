@@ -122,7 +122,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         //获取配置类
         ARRtcpOption anyRTCRTCPOption = ARRtcpEngine.Inst().getARRtcpOption();
         //设置前后置摄像头 视频横竖屏 视频质量 视频图像排列方式 发布媒体类型
-        anyRTCRTCPOption.setOptionParams(true, ARVideoCommon.ARVideoOrientation.Portrait, ARVideoCommon.ARVideoProfile.ARVideoProfile720x960, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps15);
+        anyRTCRTCPOption.setOptionParams(true, ARVideoCommon.ARVideoOrientation.Portrait, ARVideoCommon.ARVideoProfile.ARVideoProfile480x640, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps15);
         //获取RTCP对象
         rtcpKit = RtcpCore.Inst().getmRtcpKit();
         //设置回调监听

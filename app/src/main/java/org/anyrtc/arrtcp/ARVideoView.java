@@ -352,13 +352,23 @@ public class ARVideoView implements View.OnTouchListener{
 
     public VideoRenderer subscribeRemoteVideo(String videoId) {
         VideoView remoteVideoRender = mRemoteRenderList.get(videoId);
+        SUB_WIDTH=100;
+        SUB_HEIGHT= (int) ((mScreenWidth/1.333333f)/(mScreenHeight/100));
         if (remoteVideoRender == null) {
             int size = getVideoRenderSize();
             if (size == 0) {
-                remoteVideoRender = new VideoView(videoId, rlVideoGroup.getContext(), eglBase, 0, 0, 0, 100, 100);
+                if (videoId.startsWith("X100")){
+                    remoteVideoRender = new VideoView(videoId, rlVideoGroup.getContext(), eglBase, 0, 0, ((100-27)/2), 100, 27);
+                }else {
+                    remoteVideoRender = new VideoView(videoId, rlVideoGroup.getContext(), eglBase, 0, 0, ((100 - SUB_HEIGHT) / 2)-10, SUB_WIDTH, SUB_HEIGHT);
+                }
                 remoteVideoRender.surfaceViewRenderer.setZOrderMediaOverlay(false);
             } else {
-                remoteVideoRender = new VideoView(videoId, rlVideoGroup.getContext(), eglBase, size, 0, 0, 0, 0);
+                if (videoId.startsWith("X100")){
+                    remoteVideoRender = new VideoView(videoId, rlVideoGroup.getContext(), eglBase, 0, 25, 65, 50, 14);
+                }else {
+                    remoteVideoRender = new VideoView(videoId, rlVideoGroup.getContext(), eglBase, 0, 35, 65, 30, 12);
+                }
                 remoteVideoRender.surfaceViewRenderer.setZOrderMediaOverlay(true);
             }
             rlVideoGroup.addView(remoteVideoRender.mLayout, -1);
@@ -380,7 +390,7 @@ public class ARVideoView implements View.OnTouchListener{
             }, 1f);
             remoteVideoRender.videoRenderer = new VideoRenderer(remoteVideoRender.surfaceViewRenderer);
             mRemoteRenderList.put(videoId, remoteVideoRender);
-            updateVideoViewsubscribe();
+//            updateVideoViewsubscribe();
         }
         return remoteVideoRender.videoRenderer;
     }
@@ -692,7 +702,7 @@ public class ARVideoView implements View.OnTouchListener{
                     if (render.videoId.startsWith("X100")){
                         render.mLayout.setPosition(0, (100-27)/2, 100, 27);
                     }else {
-                        render.mLayout.setPosition(0, 0, 100, 100);
+                        render.mLayout.setPosition(0, 0, 100, 100);//4:3
                     }
                     render.surfaceViewRenderer.setZOrderMediaOverlay(false);
                     render.surfaceViewRenderer.requestLayout();
@@ -700,7 +710,7 @@ public class ARVideoView implements View.OnTouchListener{
                     if (render.videoId.startsWith("X100")){
                         render.mLayout.setPosition(25, 65, 50, 14);
                     }else {
-                        render.mLayout.setPosition(40, 65, 20, 15);
+                        render.mLayout.setPosition(35, 65, 30, 12);
                     }
 
                     render.surfaceViewRenderer.setZOrderMediaOverlay(true);
