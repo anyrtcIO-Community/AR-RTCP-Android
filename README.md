@@ -20,7 +20,7 @@ ARRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，�
 
 ```
 dependencies {
-  compile 'org.ar:rtcp_kit:3.0.2'
+  compile 'org.ar:rtcp_kit:3.0.3'
 }
 ```
 
@@ -29,7 +29,7 @@ dependencies {
 <dependency>
   <groupId>org.ar</groupId>
   <artifactId>rtcp_kit</artifactId>
-  <version>3.0.2</version>
+  <version>3.0.3</version>
   <type>pom</type>
 </dependency>
 ```
