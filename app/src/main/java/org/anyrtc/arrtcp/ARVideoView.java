@@ -141,7 +141,17 @@ public class ARVideoView implements View.OnTouchListener{
             View view = View.inflate(ctx, R.layout.layout_arvideo, null);//这个View可完全自定义 需要显示名字或者其他图标可以在里面加
             flLoading = (FrameLayout) view.findViewById(R.id.fl_video_loading);
             surfaceViewRenderer = (SurfaceViewRenderer) view.findViewById(R.id.sv_video_render);
-            surfaceViewRenderer.init(eglBase.getEglBaseContext(), null);
+            surfaceViewRenderer.init(eglBase.getEglBaseContext(), new RendererCommon.RendererEvents() {
+                @Override
+                public void onFirstFrameRendered() {
+
+                }
+
+                @Override
+                public void onFrameResolutionChanged(int videoWidth, int videoHeight, int rotation) {
+
+                }
+            });
             surfaceViewRenderer.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
             mLayout.addView(view);//将SurfaceView添加到自定义宽高为百分比的布局控件中
         }

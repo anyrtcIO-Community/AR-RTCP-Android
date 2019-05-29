@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven'
-version = "3.0.2"
+version = "3.0.3"
 android {
     compileSdkVersion 26
     buildToolsVersion '27.0.3'
@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 16
-        versionName "3.0.2"
+        versionCode 17
+        versionName "3.0.3"
         multiDexEnabled true
     }
 
@@ -111,5 +111,5 @@ apply from: 'fat-aar.gradle'
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'org.ar:ar_common:3.0.1'
+    compile 'org.ar:ar_common:3.0.2'
 }

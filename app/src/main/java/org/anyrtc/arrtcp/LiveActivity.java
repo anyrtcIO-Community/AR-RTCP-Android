@@ -39,6 +39,7 @@ import org.ar.rtcp_kit.ARRtcpEngine;
 import org.ar.rtcp_kit.ARRtcpEvent;
 import org.ar.rtcp_kit.ARRtcpKit;
 import org.ar.rtcp_kit.ARRtcpOption;
+import org.webrtc.VideoCapturer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,11 +50,11 @@ import java.util.List;
 
 public class LiveActivity extends BaseActivity implements View.OnClickListener {
 
-    ImageButton ibCamera, ibShare, btn_qr_code,btnScan,ibtn_log_close,btn_log;
+    ImageButton ibCamera, ibShare, btn_qr_code, btnScan, ibtn_log_close, btn_log;
     Button ibHangUp;
     TextView tv_status;
     View Space;
-    RelativeLayout rl_video,rl_log_layout;
+    RelativeLayout rl_video, rl_log_layout;
     ARRtcpKit rtcpKit;
     ARVideoView videoView;
     RecyclerView rvLogList;
@@ -61,8 +62,9 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
     boolean isPublish;
     private AnyRTCAudioManager mRtcAudioManager = null;
     private CustomDialog customDialog;
-    List<String> rtcpIDList=new ArrayList<>();
+    List<String> rtcpIDList = new ArrayList<>();
     LogAdapter logAdapter;
+
     @Override
     public int getLayoutId() {
         return R.layout.activity_live;
@@ -78,19 +80,19 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
     public void initView(Bundle savedInstanceState) {
         Space = findViewById(R.id.view_space);
         mImmersionBar.titleBar(Space).init();
-        rvLogList=findViewById(R.id.rv_log);
-        rl_log_layout=findViewById(R.id.rl_log_layout);
-        ibtn_log_close=findViewById(R.id.ibtn_close_log);
-        btn_log=findViewById(R.id.btn_log);
+        rvLogList = findViewById(R.id.rv_log);
+        rl_log_layout = findViewById(R.id.rl_log_layout);
+        ibtn_log_close = findViewById(R.id.ibtn_close_log);
+        btn_log = findViewById(R.id.btn_log);
         ibHangUp = (Button) findViewById(R.id.ib_leave);
         ibCamera = (ImageButton) findViewById(R.id.btn_camare);
         ibShare = (ImageButton) findViewById(R.id.btn_share);
         rl_video = (RelativeLayout) findViewById(R.id.rl_video);
         tv_status = (TextView) findViewById(R.id.tv_status);
         btn_qr_code = (ImageButton) findViewById(R.id.btn_qr_code);
-        btnScan=findViewById(R.id.btn_scan);
+        btnScan = findViewById(R.id.btn_scan);
         rvLogList.setLayoutManager(new LinearLayoutManager(this));
-        logAdapter=new LogAdapter();
+        logAdapter = new LogAdapter();
         rvLogList.setAdapter(logAdapter);
         btnScan.setOnClickListener(this);
         btn_qr_code.setOnClickListener(this);
@@ -122,24 +124,43 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         //获取配置类
         ARRtcpOption anyRTCRTCPOption = ARRtcpEngine.Inst().getARRtcpOption();
         //设置前后置摄像头 视频横竖屏 视频质量 视频图像排列方式 发布媒体类型
-        anyRTCRTCPOption.setOptionParams(true, ARVideoCommon.ARVideoOrientation.Portrait, ARVideoCommon.ARVideoProfile.ARVideoProfile480x640, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps15);
+        anyRTCRTCPOption.setOptionParams(true, ARVideoCommon.ARVideoOrientation.Portrait,
+                ARVideoCommon.ARVideoProfile.ARVideoProfile480x640, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps15);
         //获取RTCP对象
         rtcpKit = RtcpCore.Inst().getmRtcpKit();
         //设置回调监听
         rtcpKit.setRtcpEvent(arRtcpEvent);
         //实例化视频窗口管理对象
-        videoView = new ARVideoView(rl_video,  ARRtcpEngine.Inst().Egl(),this,false);
-        videoView.setVideoViewLayout(true,Gravity.CENTER, LinearLayout.VERTICAL);
+        videoView = new ARVideoView(rl_video, ARRtcpEngine.Inst().Egl(), this, false);
+        videoView.setVideoViewLayout(true, Gravity.CENTER, LinearLayout.VERTICAL);
         if (isPublish) {//如果是发布
             //设置本地视频采集
             rtcpKit.setLocalVideoCapturer(videoView.openLocalVideoRender().GetRenderPointer());
+            //是否使用ARCamera进行本地显示， 如果设置为false，且不调用setByteBufferFrameCaptured方法的情况下，本地无视频显示
+//            rtcpKit.setUsedARCamera(false);
+            rtcpKit.setARCameraCaptureObserver(new VideoCapturer.ARCameraCapturerObserver() {
+
+                @Override
+                public void onByteBufferFrameCaptured(byte[] data, int width, int height, int rotation, long timeStamp) {
+//                    Log.e("LiveActivity", "[AR] " + data.toString());
+//                    Log.e("LiveActivity", "[AR] width: " + width);
+//                    Log.e("LiveActivity", "[AR] height: " + height);
+//                    Log.e("LiveActivity", "[AR] rotation: " + rotation);
+//                    Log.e("LiveActivity", "[AR] timeStamp: " + timeStamp);
+
+                    //数据塞回底层进行本地显示（如果没有设置setUsedARCamera(false)，不需要调用此方法）
+//                    rtcpKit.setByteBufferFrameCaptured(data, width, height, rotation, timeStamp);
+                }
+            });
+
+
             //发布
             rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video);
             logAdapter.addData("方法：publishByToken");
         } else {
             //订阅媒体
             strPeerId = getIntent().getStringExtra("id");
-            rtcpKit.subscribe(strPeerId,"");
+            rtcpKit.subscribe(strPeerId, "");
             logAdapter.addData("方法：subscribe");
             rtcpIDList.add(strPeerId);
         }
@@ -162,13 +183,14 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
     }
 
-    private ARRtcpEvent arRtcpEvent=new ARRtcpEvent() {
+    private ARRtcpEvent arRtcpEvent = new ARRtcpEvent() {
         @Override
         public void onPublishOK(final String rtcpId, final String liveInfo) {
             LiveActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    logAdapter.addData("回调：onPublishOK \n rtcpId："+rtcpId +" liveInfo:"+liveInfo);
+                    Log.e(this.getClass().toString(), "rtcpid:   " + rtcpId);
+                    logAdapter.addData("回调：onPublishOK \n rtcpId：" + rtcpId + " liveInfo:" + liveInfo);
                     if (tv_status != null) {
                         strPeerId = rtcpId;
                         tv_status.setText("发布成功\n直播间ID:" + rtcpId);
@@ -182,8 +204,8 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             LiveActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(LiveActivity.class.getName(), "OnPublishFailed:code=" + code );
-                    logAdapter.addData("回调：onPublishFailed \nerrorCode="+code+" reason="+reason);
+                    Log.d(LiveActivity.class.getName(), "OnPublishFailed:code=" + code);
+                    logAdapter.addData("回调：onPublishFailed \nerrorCode=" + code + " reason=" + reason);
                     if (tv_status != null) {
                         tv_status.setText("发布失败 code=" + code);
                     }
@@ -196,7 +218,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             LiveActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    logAdapter.addData("回调：onPublishExOK rtcpId："+rtcpId +" liveInfo:"+liveInfo);
+                    logAdapter.addData("回调：onPublishExOK rtcpId：" + rtcpId + " liveInfo:" + liveInfo);
                 }
             });
         }
@@ -206,7 +228,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             LiveActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    logAdapter.addData("回调：onPublishExFailed errorCode="+code+" reason="+strReason);
+                    logAdapter.addData("回调：onPublishExFailed errorCode=" + code + " reason=" + strReason);
                 }
             });
         }
@@ -217,8 +239,8 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                 @Override
                 public void run() {
                     Log.d(LiveActivity.class.getName(), "OnSubscribeOK:" + rtcpId);
-                    logAdapter.addData("回调：onSubscribeOK rtcpId="+rtcpId);
-                    strPeerId=rtcpId;
+                    logAdapter.addData("回调：onSubscribeOK rtcpId=" + rtcpId);
+                    strPeerId = rtcpId;
                     if (tv_status != null) {
                         tv_status.setText("订阅成功 \n直播间ID:" + rtcpId);
                     }
@@ -232,7 +254,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                 @Override
                 public void run() {
                     logAdapter.addData("回调：onSubscribeFailed");
-                    Log.d(LiveActivity.class.getName(), "OnSubscribeFailed rtcpId" + rtcpId+"errorCode="+code+"reason="+reason);
+                    Log.d(LiveActivity.class.getName(), "OnSubscribeFailed rtcpId" + rtcpId + "errorCode=" + code + "reason=" + reason);
                     if (tv_status != null) {
                         tv_status.setText("订阅失败 code=" + code);
                     }
@@ -258,10 +280,10 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             LiveActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    logAdapter.addData("回调：onRTCCloseRemoteVideoRender rtcpId="+rtcpId);
+                    logAdapter.addData("回调：onRTCCloseRemoteVideoRender rtcpId=" + rtcpId);
                     Log.d(LiveActivity.class.getName(), "OnRTCCloseVideoRender:" + rtcpId);
-                    if (rtcpKit!=null){
-                        rtcpKit.setRemoteVideoRender(rtcpId,0);
+                    if (rtcpKit != null) {
+                        rtcpKit.setRemoteVideoRender(rtcpId, 0);
                         videoView.removeRemoteRender(rtcpId);
                         if (videoView.getRemoteVideoSize()==0) {
                             finishAnimActivity();
@@ -276,7 +298,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             LiveActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    logAdapter.addData("回调：onRTCOpenRemoteAudioTrack rtcpId="+rtcpId);
+                    logAdapter.addData("回调：onRTCOpenRemoteAudioTrack rtcpId=" + rtcpId);
                     Log.d(LiveActivity.class.getName(), "onRTCOpenRemoteAudioTrack:" + rtcpId);
                 }
             });
@@ -287,7 +309,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             LiveActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    logAdapter.addData("回调：onRTCCloseRemoteAudioTrack rtcpId="+rtcpId);
+                    logAdapter.addData("回调：onRTCCloseRemoteAudioTrack rtcpId=" + rtcpId);
                     Log.d(LiveActivity.class.getName(), "onRTCCloseRemoteAudioTrack:" + rtcpId);
                 }
             });
@@ -298,7 +320,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             LiveActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    logAdapter.addData("回调：onRTCRemoteAVStatus rtcpId="+rtcpId +"audio="+bAudio+ "video="+bVideo);
+                    logAdapter.addData("回调：onRTCRemoteAVStatus rtcpId=" + rtcpId + "audio=" + bAudio + "video=" + bVideo);
                 }
             });
         }
@@ -345,12 +367,12 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ib_leave:
-                if (!isPublish){
+                if (!isPublish) {
                     //解除订阅
-                    for (int i=0;i<rtcpIDList.size();i++){
+                    for (int i = 0; i < rtcpIDList.size(); i++) {
                         rtcpKit.unSubscribe(rtcpIDList.get(i));
                     }
-                }else {
+                } else {
                     //取消发布
                     rtcpKit.unPublish();
                     rtcpKit.stopCapture();
@@ -375,9 +397,9 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
 
                 break;
             case R.id.btn_qr_code:
-                if (AndPermission.hasPermissions(LiveActivity.this,Permission.WRITE_EXTERNAL_STORAGE)){
+                if (AndPermission.hasPermissions(LiveActivity.this, Permission.WRITE_EXTERNAL_STORAGE)) {
                     showQRcodeDialog();
-            }else {
+                } else {
                     AndPermission.with(LiveActivity.this).runtime().permission(Permission.WRITE_EXTERNAL_STORAGE).onGranted(new Action<List<String>>() {
                         @Override
                         public void onAction(List<String> data) {
@@ -412,7 +434,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    private void showQRcodeDialog(){
+    private void showQRcodeDialog() {
         CustomDialog.Builder builder = new CustomDialog.Builder(LiveActivity.this);
         customDialog = builder.setContentView(R.layout.qr_code)
                 .setCancelable(true)
@@ -422,10 +444,10 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                 .show(new CustomDialog.Builder.onInitListener() {
                     @Override
                     public void init(final CustomDialog customDialog) {
-                        ImageView iv= (ImageView) customDialog.findViewById(R.id.iv_code);
-                        Bitmap bitmapQRCode=null;
-                        if (null!=iv&& !TextUtils.isEmpty(strPeerId)) {
-                            bitmapQRCode=QRCode.createQRCode(strPeerId);
+                        ImageView iv = (ImageView) customDialog.findViewById(R.id.iv_code);
+                        Bitmap bitmapQRCode = null;
+                        if (null != iv && !TextUtils.isEmpty(strPeerId)) {
+                            bitmapQRCode = QRCode.createQRCode(strPeerId);
                             iv.setImageBitmap(bitmapQRCode);
                         }
                         final Bitmap finalBitmapQRCode = bitmapQRCode;
@@ -438,7 +460,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                                 return true;
                             }
                         });
-                        RelativeLayout root=customDialog.findViewById(R.id.rl_root);
+                        RelativeLayout root = customDialog.findViewById(R.id.rl_root);
                         root.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -463,12 +485,12 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (!isPublish){
-                for (int i=0;i<rtcpIDList.size();i++){
+            if (!isPublish) {
+                for (int i = 0; i < rtcpIDList.size(); i++) {
                     rtcpKit.unSubscribe(rtcpIDList.get(i));
                 }
 
-            }else {
+            } else {
                 rtcpKit.unPublish();
             }
             finishAnimActivity();
@@ -480,10 +502,10 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==100){
-            if (resultCode==200){
+        if (requestCode == 100) {
+            if (resultCode == 200) {
                 String strPeerId = data.getStringExtra("id");
-                rtcpKit.subscribe(strPeerId,"");
+                rtcpKit.subscribe(strPeerId, "");
                 rtcpIDList.add(strPeerId);
             }
         }
@@ -492,7 +514,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
 
     //===========================保存二维码==============================
 
-    public  File getRootPath(Context context) {
+    public File getRootPath(Context context) {
         if (sdCardIsAvailable()) {
             return Environment.getExternalStorageDirectory(); // 取得sdcard文件路径
         } else {
@@ -500,32 +522,33 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public  boolean sdCardIsAvailable() {
+    public boolean sdCardIsAvailable() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             File sd = new File(Environment.getExternalStorageDirectory().getPath());
             return sd.canWrite();
         } else
             return false;
     }
+
     public void saveImageToGallery(Bitmap bmp) {
         // 首先保存图片
-        File appDir = new File(getRootPath(this).getAbsolutePath()+File.separator+"ARRTCP/QRCODE");
+        File appDir = new File(getRootPath(this).getAbsolutePath() + File.separator + "ARRTCP/QRCODE");
         if (!appDir.exists()) {
             appDir.mkdirs();
         }
-        File file = new File(appDir, strPeerId+".jpg");
+        File file = new File(appDir, strPeerId + ".jpg");
         try {
             FileOutputStream fos = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
             fos.close();
-            Toast.makeText(this,"已保存到 /ARRTCP/QRCODE 目录下",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "已保存到 /ARRTCP/QRCODE 目录下", Toast.LENGTH_SHORT).show();
         } catch (FileNotFoundException e) {
-            Toast.makeText(this,"出错了，请重试",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "出错了，请重试", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this,"出错了，请重试",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "出错了，请重试", Toast.LENGTH_SHORT).show();
         }
     }
 }

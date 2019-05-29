@@ -28,7 +28,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:28.0.0'
 //    compile(name: 'rtcp-release', ext: 'aar')
-    compile 'org.ar:rtcp_kit:3.0.2'
+    compile 'org.ar:rtcp_kit:3.0.3'
     compile 'com.yanzhenjie.permission:support:2.0.1'
     compile 'com.google.zxing:core:3.3.0'
     compile 'com.gyf.barlibrary:barlibrary:2.3.0'

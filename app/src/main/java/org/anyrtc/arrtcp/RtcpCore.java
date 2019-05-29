@@ -1,8 +1,6 @@
 package org.anyrtc.arrtcp;
 
 
-import org.ar.common.enums.ARVideoCommon;
-import org.ar.rtcp_kit.ARRtcpEngine;
 import org.ar.rtcp_kit.ARRtcpKit;
 
 public class RtcpCore {
@@ -15,8 +13,6 @@ public class RtcpCore {
         }
         return mInstance;
     }
-
-
 
     private ARRtcpKit mRtcpKit;
 

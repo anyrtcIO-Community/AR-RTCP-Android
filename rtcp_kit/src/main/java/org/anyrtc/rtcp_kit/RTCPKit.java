@@ -737,6 +737,12 @@ public class RTCPKit {
 
     private native void nativeUnSubscribe(String strRtcpId);
 
+    private native void nativeSetExternalCameraCapturer(boolean enable, int type);
+
+    private native void nativeSetVideoYUV420PData(char y, int stride_y, char u, int stride_u, char v, int stride_v, int width, int height);
+
+    private native void nativeSetVideoCapturer(char p_rgb, int width, int height);
+
     private native void nativeSetRTCVideoRender(String strRtcpId, long nativeRenderer);
 
     private native void nativeDestroy();

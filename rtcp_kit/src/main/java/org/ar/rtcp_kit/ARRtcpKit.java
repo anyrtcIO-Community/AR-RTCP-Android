@@ -1,8 +1,5 @@
 package org.ar.rtcp_kit;
 
-import android.content.pm.PackageManager;
-import android.support.annotation.RequiresPermission;
-import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 
 import org.ar.common.enums.ARNetQuality;
@@ -16,9 +13,6 @@ import org.webrtc.VideoCapturer.ARCameraCapturerObserver;
 import org.webrtc.VideoCapturerAndroid;
 
 import java.util.concurrent.Exchanger;
-
-import static android.Manifest.permission.CAMERA;
-import static android.Manifest.permission.RECORD_AUDIO;
 
 /**
  * Created by liuxiaozhong on 2019/1/15.
@@ -137,6 +131,7 @@ public class ARRtcpKit {
         });
         LooperExecutor.exchange(result, false);
     }
+
     /**
      * 停止辅助摄像头预览和传输
      */
@@ -179,6 +174,7 @@ public class ARRtcpKit {
 
     /**
      * 设置ARCamera视频回调数据
+     *
      * @param capturerObserver
      */
     public void setARCameraCaptureObserver(final ARCameraCapturerObserver capturerObserver) {
@@ -193,7 +189,8 @@ public class ARRtcpKit {
     }
 
     /**
-     *  设置是否采用ARCamera，默认使用ARCamera， 如果设置为false，必须调用setByteBufferFrameCaptured才能本地显示
+     * 设置是否采用ARCamera，默认使用ARCamera， 如果设置为false，必须调用setByteBufferFrameCaptured才能本地显示
+     *
      * @param usedARCamera true：使用ARCamera，false：不使用ARCamera采集的数据
      */
     public void setUsedARCamera(final boolean usedARCamera) {
@@ -209,10 +206,11 @@ public class ARRtcpKit {
 
     /**
      * 设置本地显示的视频数据
-     * @param data 相机采集数据
-     * @param width 宽
-     * @param height 高
-     * @param rotation 旋转角度
+     *
+     * @param data      相机采集数据
+     * @param width     宽
+     * @param height    高
+     * @param rotation  旋转角度
      * @param timeStamp 时间戳
      */
     public void setByteBufferFrameCaptured(final byte[] data, final int width, final int height, final int rotation, final long timeStamp) {
@@ -709,6 +707,60 @@ public class ARRtcpKit {
         });
     }
 
+    /**
+     * 设置外部数据流接口
+     * @param enable true：打开， false：关闭
+     * @param type
+     */
+    public void setExternalCameraCapturer(final boolean enable, final ARCaptureType type) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                nativeSetExternalCameraCapturer(enable, type.type);
+            }
+        });
+    }
+
+    /**
+     * 外部yuv数据
+     * @param p_yuv
+     * @param width
+     * @param height
+     */
+    public void setVideoYUV420PData(byte[] p_yuv, int width, int height) {
+        nativeSetYUV420PData(p_yuv, width, height);
+    }
+
+    public void setVideoYUV420PData(byte[] y, int stride_y, byte[] u, int stride_u, byte[] v, int stride_v, int width, int height) {
+        nativeSetVideoYUV420PData(y, stride_y, u, stride_u, v, stride_v, width, height);
+    }
+
+    /**
+     * 外部rgb数据
+     * @param p_rgb
+     * @param width
+     * @param height
+     */
+    public void setVideoRGB565Data(byte[] p_rgb, int width, int height) {
+        nativeSetVideoRGB565Data(p_rgb, width, height);
+    }
+    /**
+     *
+     * @param bEnable
+     */
+    public void setExH264Capturer(final boolean bEnable) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                nativeSetExH264Capturer(bEnable);
+            }
+        });
+    }
+
+    public void setVideoH264Data(final byte[] data, final int length) {
+        nativeSetVideoH264Data(data, length);
+    }
+
     public void setRemoteVideoRender(final String rtcpId, final long render) {
         mExecutor.execute(new Runnable() {
             @Override
@@ -821,6 +873,7 @@ public class ARRtcpKit {
 
     /**
      * 此接口仅使用AnyRTCVideoQualityMode枚举类型
+     *
      * @param nVideoMode
      */
     private native void nativeSetVideoModeExcessive(int nVideoMode);
@@ -831,6 +884,7 @@ public class ARRtcpKit {
 
     /**
      * 此接口仅使用枚举ARVideoProfile枚举类型
+     *
      * @param nVideoMode
      */
     private native void nativeSetVideoProfileMode(int nVideoMode);
@@ -838,10 +892,11 @@ public class ARRtcpKit {
     private native void nativeSetVideoFpsProfile(int nFpsMode);
 
 
-
     private native void nativeSetExVideoMode(int nVideoMode);
+
     /**
      * 此接口仅使用AnyRTCVideoQualityMode枚举类型
+     *
      * @param nVideoMode
      */
     private native void nativeSetExVideoModeExcessive(int nVideoMode);
@@ -849,8 +904,10 @@ public class ARRtcpKit {
     private native void nativeSetExVideoBitrate(int bitrate);
 
     private native void nativeSetExVideoFps(int fps);
+
     /**
      * 此接口仅使用枚举ARVideoProfile枚举类型
+     *
      * @param nVideoMode
      */
     private native void nativeSetExVideoProfileMode(int nVideoMode);
@@ -870,6 +927,18 @@ public class ARRtcpKit {
     private native void nativeSubscribe(String strRtcpId);
 
     private native void nativeUnSubscribe(String strRtcpId);
+
+    private native void nativeSetExternalCameraCapturer(boolean enable, int type);
+
+    private native void nativeSetYUV420PData(byte[] p_rgb, int width, int height);
+
+    private native void nativeSetVideoYUV420PData(byte[] y, int stride_y, byte[] u, int stride_u, byte[] v, int stride_v, int width, int height);
+
+    private native void nativeSetVideoRGB565Data(byte[] p_rgb, int width, int height);
+
+    private native void nativeSetExH264Capturer(boolean bEnable);
+
+    private native void nativeSetVideoH264Data(byte[] data, int length);
 
     private native void nativeSetRTCVideoRender(String strRtcpId, long nativeRenderer);
 

@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:drawableTop="@drawable/iv_logo"
-            android:text="anyRTC实时直播体验DEMO"
+            android:text="AR实时直播体验DEMO"
             android:layout_marginTop="40dp"
             android:textColor="#CCCCCC"
             android:textSize="12sp" />

@@ -29,6 +29,9 @@
         </activity>
         <activity android:name=".LiveActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".LiveExternalActivity" />
+        <activity android:name=".MediaCodecExtraActivity">
+        </activity>
         <activity
             android:name=".zxing.ScanActivity"
             android:screenOrientation="portrait" />
