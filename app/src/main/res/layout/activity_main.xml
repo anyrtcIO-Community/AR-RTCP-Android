@@ -50,7 +50,6 @@
             android:background="@drawable/shape_index_button"
             android:textColor="#FFFFFF" />
 
-
         <Button
             android:id="@+id/tv_watch_live"
             android:layout_width="match_parent"

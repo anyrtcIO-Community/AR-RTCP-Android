@@ -709,6 +709,7 @@ public class ARRtcpKit {
 
     /**
      * 设置外部数据流接口
+     *
      * @param enable true：打开， false：关闭
      * @param type
      */
@@ -723,6 +724,7 @@ public class ARRtcpKit {
 
     /**
      * 外部yuv数据
+     *
      * @param p_yuv
      * @param width
      * @param height
@@ -737,6 +739,7 @@ public class ARRtcpKit {
 
     /**
      * 外部rgb数据
+     *
      * @param p_rgb
      * @param width
      * @param height
@@ -744,8 +747,8 @@ public class ARRtcpKit {
     public void setVideoRGB565Data(byte[] p_rgb, int width, int height) {
         nativeSetVideoRGB565Data(p_rgb, width, height);
     }
+
     /**
-     *
      * @param bEnable
      */
     public void setExH264Capturer(final boolean bEnable) {

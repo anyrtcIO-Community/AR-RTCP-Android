@@ -218,7 +218,7 @@ public class LiveExternalActivity extends BaseActivity implements View.OnClickLi
                 parameters = mCamera.getParameters();
                 parameters.setPreviewFormat(ImageFormat.NV21);
                 parameters.setPreviewSize(width, height);
-                parameters.setPreviewFrameRate(10);
+                parameters.setPreviewFrameRate(15);
 //                parameters.setRotation(90);
                 mCamera.setParameters(parameters);
                 mCamera.setPreviewDisplay(surfaceHolder);
