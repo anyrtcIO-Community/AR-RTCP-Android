@@ -11,7 +11,7 @@ ARRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，�
 ##### 扫码下载
 ![image](https://www.pgyer.com/app/qrcode/so6a)
 ##### [点击下载](https://www.pgyer.com/so6a)
-##### [WEB在线体验](https://beyond.anyrtc.cc/demo/rtcp)
+##### [WEB在线体验](https://demos.anyrtc.io/ar-rtcp/)
 
 ### SDK集成
 # > 方式一 [ ![Download](https://api.bintray.com/packages/dyncanyrtc/ar_dev/rtcp/images/download.svg) ](https://bintray.com/dyncanyrtc/ar_dev/rtcp/_latestVersion)
@@ -53,7 +53,7 @@ Android API 16+
 >如果您还未注册anyRTC开发者账号，请登录[anyRTC官网](http://www.anyrtc.io)注册及获取更多的帮助。
 
 ##### 替换开发者账号
-在[anyRTC官网](http://www.anyrtc.io)获取了开发者账号，AppID等信息后，替换DEMO中
+在[anyRTC官网](http://www.anyrtc.io)获取应用ID，应用Token后，替换DEMO中
 **DeveloperInfo**类中的开发者信息即可
 
 ### 操作步骤
