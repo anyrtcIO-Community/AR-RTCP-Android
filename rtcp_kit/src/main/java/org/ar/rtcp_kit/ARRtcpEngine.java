@@ -146,7 +146,7 @@ public class ARRtcpEngine {
     /**
      * 设置私有云地址
      * @param address 私有云ip地址或者域名
-     * @param port 端口
+     * @param poraxxt 端口
      */
     public void configServerForPriCloud(final String address, final int port) {
         strSvrAddr = address;

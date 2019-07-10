@@ -724,28 +724,28 @@ public class ARRtcpKit {
 
     /**
      * 外部yuv数据
-     *
      * @param p_yuv
      * @param width
      * @param height
+     * @return -1:分辨率或者塞流模式不正确，0：设置成功；
      */
-    public void setVideoYUV420PData(byte[] p_yuv, int width, int height) {
-        nativeSetYUV420PData(p_yuv, width, height);
+    public int setVideoYUV420PData(byte[] p_yuv, int width, int height) {
+        return nativeSetYUV420PData(p_yuv, width, height);
     }
 
-    public void setVideoYUV420PData(byte[] y, int stride_y, byte[] u, int stride_u, byte[] v, int stride_v, int width, int height) {
-        nativeSetVideoYUV420PData(y, stride_y, u, stride_u, v, stride_v, width, height);
+    public int setVideoYUV420PData(byte[] y, int stride_y, byte[] u, int stride_u, byte[] v, int stride_v, int width, int height) {
+        return nativeSetVideoYUV420PData(y, stride_y, u, stride_u, v, stride_v, width, height);
     }
 
     /**
      * 外部rgb数据
-     *
      * @param p_rgb
      * @param width
      * @param height
+     * @return -1:分辨率或者塞流模式不正确，0：设置成功；
      */
-    public void setVideoRGB565Data(byte[] p_rgb, int width, int height) {
-        nativeSetVideoRGB565Data(p_rgb, width, height);
+    public int setVideoRGB565Data(byte[] p_rgb, int width, int height) {
+        return nativeSetVideoRGB565Data(p_rgb, width, height);
     }
 
     /**
@@ -933,11 +933,11 @@ public class ARRtcpKit {
 
     private native void nativeSetExternalCameraCapturer(boolean enable, int type);
 
-    private native void nativeSetYUV420PData(byte[] p_rgb, int width, int height);
+    private native int nativeSetYUV420PData(byte[] p_rgb, int width, int height);
 
-    private native void nativeSetVideoYUV420PData(byte[] y, int stride_y, byte[] u, int stride_u, byte[] v, int stride_v, int width, int height);
+    private native int nativeSetVideoYUV420PData(byte[] y, int stride_y, byte[] u, int stride_u, byte[] v, int stride_v, int width, int height);
 
-    private native void nativeSetVideoRGB565Data(byte[] p_rgb, int width, int height);
+    private native int nativeSetVideoRGB565Data(byte[] p_rgb, int width, int height);
 
     private native void nativeSetExH264Capturer(boolean bEnable);
 
