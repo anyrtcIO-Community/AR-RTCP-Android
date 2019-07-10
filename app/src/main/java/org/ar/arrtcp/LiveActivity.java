@@ -246,6 +246,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                 @Override
                 public void run() {
                     logAdapter.addData("回调：onRTCOpenRemoteVideoRender");
+                    //显示对方视频
                     Log.d(LiveActivity.class.getName(), "OnRTCOpenVideoRender rtcpId=" + rtcpId);
                     long renderPointer = videoView.subscribeRemoteVideo(rtcpId).GetRenderPointer();
                     rtcpKit.setRemoteVideoRender(rtcpId, renderPointer);
@@ -260,6 +261,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                 public void run() {
                     logAdapter.addData("回调：onRTCCloseRemoteVideoRender rtcpId="+rtcpId);
                     Log.d(LiveActivity.class.getName(), "OnRTCCloseVideoRender:" + rtcpId);
+                    //移除对方视频
                     if (rtcpKit!=null){
                         rtcpKit.setRemoteVideoRender(rtcpId,0);
                         videoView.removeRemoteRender(rtcpId);
@@ -354,6 +356,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                     //取消发布
                     rtcpKit.unPublish();
                     rtcpKit.stopCapture();
+                    videoView.removeLocalVideoRender();
                 }
                 finishAnimActivity();
                 break;
