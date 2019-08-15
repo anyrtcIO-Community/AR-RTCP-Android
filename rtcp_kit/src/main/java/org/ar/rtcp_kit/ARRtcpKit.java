@@ -1,18 +1,31 @@
 package org.ar.rtcp_kit;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 
+import org.ar.common.enums.ARCaptureType;
 import org.ar.common.enums.ARNetQuality;
 import org.ar.common.enums.ARVideoCommon;
 import org.ar.common.utils.ARUtils;
 import org.ar.common.utils.LooperExecutor;
 import org.webrtc.CameraEnumerationAndroid;
 import org.webrtc.EglBase;
+import org.webrtc.ScreenCapturerAndroid;
 import org.webrtc.VideoCapturer;
 import org.webrtc.VideoCapturer.ARCameraCapturerObserver;
 import org.webrtc.VideoCapturerAndroid;
 
 import java.util.concurrent.Exchanger;
+
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.RECORD_AUDIO;
 
 /**
  * Created by liuxiaozhong on 2019/1/15.
@@ -38,6 +51,7 @@ public class ARRtcpKit {
 
     private int mCameraId = 0;
     private VideoCapturerAndroid mVideoCapturer;
+    private ScreenCapturerAndroid mVideoScreenCapturer;
     private VideoCapturerAndroid mVideoCapturerEx;
 
     private boolean bFront = true;
@@ -435,8 +449,8 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 int ret = 0;
-//                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), CAMERA);
-//                if (permission == PackageManager.PERMISSION_GRANTED) {
+                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), CAMERA);
+                if (permission == PackageManager.PERMISSION_GRANTED) {
                     // We don't have permission so prompt the user
                     if (mVideoCapturer == null) {
                         mCameraId = 0;
@@ -460,13 +474,68 @@ public class ARRtcpKit {
                         LooperExecutor.exchange(result, 3);
                     }
 
-//                } else {
-//                    LooperExecutor.exchange(result, 0);
-//                }
+                } else {
+                    LooperExecutor.exchange(result, 0);
+                }
             }
         });
         return LooperExecutor.exchange(result, 0);
     }
+
+    /**
+     * 加载本地屏幕共享
+     * @param render 底层图像地址
+     * @param mediaProjectionPermissionResultData
+     * @return 打开本地预览返回值：0/1/2：没有相机权限/打开成功/打开相机失败
+     */
+    public int setLocalScreenVideoCapturer(final long render, final Intent mediaProjectionPermissionResultData) {
+        final Exchanger<Integer> result = new Exchanger<Integer>();
+        mExecutor.execute(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void run() {
+                int ret = 0;
+                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), CAMERA);
+                if (permission == PackageManager.PERMISSION_GRANTED) {
+                    // We don't have permission so prompt the user
+                    if (mVideoScreenCapturer == null) {
+                        MediaProjectionManager mediaProjectionManager =
+                                null;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            mediaProjectionManager = (MediaProjectionManager) ARRtcpEngine.Inst().context().getSystemService(
+                                    Context.MEDIA_PROJECTION_SERVICE);
+                        }
+                        mVideoScreenCapturer = new ScreenCapturerAndroid(mediaProjectionPermissionResultData,  new MediaProjection.Callback() {
+                            @Override
+                            public void onStop() {
+                                Log.e("sys", "User revoked permission to capture the screen.");
+                            }
+                        });
+
+                        if (mVideoScreenCapturer == null) {
+                            Log.e("sys", "Failed to open camera");
+                            LooperExecutor.exchange(result, 2);
+                        }
+                        nativeSetVideoCapturer(mVideoScreenCapturer, render);
+                        LooperExecutor.exchange(result, 1);
+                    } else {
+                        LooperExecutor.exchange(result, 3);
+                    }
+                } else {
+                    LooperExecutor.exchange(result, 0);
+                }
+            }
+        });
+        return LooperExecutor.exchange(result, 0);
+    }
+
+//    private ScreenCapturerAndroid.ScreenCallback mScreenCallback = new ScreenCapturerAndroid.ScreenCallback() {
+//        @Override
+//        public void ScreenData(byte[] data, int width, int height) {
+//            int result = nativeSetYUV420PData(data, width, height);
+//            Log.e(this.getClass().toString(), "nativeSetYUV420PData Result:   " + result);
+//        }
+//    };
 
     /**
      * 加载本地附加摄像头
@@ -481,8 +550,8 @@ public class ARRtcpKit {
             public void run() {
                 bFront = ARRtcpEngine.Inst().getExARRtcpOption().isDefaultFrontCamera();
                 int ret = 0;
-//                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), CAMERA);
-//                if (permission == PackageManager.PERMISSION_GRANTED) {
+                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), CAMERA);
+                if (permission == PackageManager.PERMISSION_GRANTED) {
                     // We don't have permission so prompt the user
                     int numberOfCameras = CameraEnumerationAndroid.getDeviceCount();
                     if (numberOfCameras < 2) {
@@ -508,9 +577,9 @@ public class ARRtcpKit {
                         LooperExecutor.exchange(result, 3);
                     }
 
-//                } else {
-//                    LooperExecutor.exchange(result, 0);
-//                }
+                } else {
+                    LooperExecutor.exchange(result, 0);
+                }
             }
         });
         return LooperExecutor.exchange(result, 0);
@@ -546,6 +615,20 @@ public class ARRtcpKit {
         });
     }
 
+    /**
+     * 打开或关闭音频数据回调开关
+     *
+     * @param bEnable true: 打开; false: 关闭
+     */
+    public void setAudioNeedPcm(final boolean bEnable) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                nativeSetAudioNeedPcm(bEnable);
+            }
+        });
+    }
+
     //* RTC function for rtcp
 
     /**
@@ -560,9 +643,9 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 int ret = 0;
-//                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
-//                if (permission == PackageManager.PERMISSION_GRANTED) {
-                    if (null!=token&&!token.equals("")) {
+                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
+                if (permission == PackageManager.PERMISSION_GRANTED) {
+                    if (null != token && !token.equals("")) {
                         nativeSetUserToken(token);
                     }
                     ARRtcpEngine.Inst().getARRtcpOption().setMediaType(mediaType);
@@ -573,13 +656,90 @@ public class ARRtcpKit {
                     }
                     nativeSetDeviceInfo(ARRtcpEngine.Inst().getDeviceInfo());
                     // We have permission granted to the user
-                    nativePublish(ARRtcpEngine.Inst().getARRtcpOption().getMediaType().type, (int)((Math.random()*9+1)*100000)+"", false);
+                    nativePublish(ARRtcpEngine.Inst().getARRtcpOption().getMediaType().type, (int) ((Math.random() * 9 + 1) * 100000) + "", false);
 
                     ret = 1;
-//                } else {
-//                    ret = 0;
-//                }
+                } else {
+                    ret = 0;
+                }
+                LooperExecutor.exchange(result, ret);
+            }
+        });
+        return LooperExecutor.exchange(result, 0);
+    }
 
+    /**
+     * 发布视频
+     * @param token 令牌:客户端向自己服务申请获得，参考企业级安全指南
+     * @param arId 用户自定义字符串， 整个系统保持唯一，可通过arId查询频道信息
+     * @param mediaType 发布类型
+     * @return 发布结果；0/1:发布失败（没有RECORD_AUDIO权限）/发布成功
+     */
+    public int publishByToken(final String token, final String arId, final ARVideoCommon.ARMediaType mediaType) {
+        final Exchanger<Integer> result = new Exchanger<Integer>();
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                int ret = 0;
+                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
+                if (permission == PackageManager.PERMISSION_GRANTED) {
+                    if (null != token && !token.equals("")) {
+                        nativeSetUserToken(token);
+                    }
+                    ARRtcpEngine.Inst().getARRtcpOption().setMediaType(mediaType);
+                    if (ARRtcpEngine.Inst().getARRtcpOption().getMediaType() == ARVideoCommon.ARMediaType.Audio) {
+                        nativeSetAuidoModel(true, true);
+                    } else {
+                        nativeSetAuidoModel(false, true);
+                    }
+                    nativeSetDeviceInfo(ARRtcpEngine.Inst().getDeviceInfo());
+                    // We have permission granted to the user
+                    nativePublish(ARRtcpEngine.Inst().getARRtcpOption().getMediaType().type, arId, false);
+
+                    ret = 1;
+                } else {
+                    ret = 0;
+                }
+
+                LooperExecutor.exchange(result, ret);
+            }
+        });
+        return LooperExecutor.exchange(result, 0);
+    }
+
+
+    /**
+     * 发布视频
+     *
+     * @param token 令牌:客户端向自己服务申请获得，参考企业级安全指南
+     * @param mediaType 发布媒体类型
+     * @param bIsNeedTransform 是否需要转码
+     * @return
+     */
+    public int publishByToken(final String token, final ARVideoCommon.ARMediaType mediaType, final boolean bIsNeedTransform) {
+        final Exchanger<Integer> result = new Exchanger<Integer>();
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                int ret = 0;
+                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
+                if (permission == PackageManager.PERMISSION_GRANTED) {
+                    if (null != token && !token.equals("")) {
+                        nativeSetUserToken(token);
+                    }
+                    ARRtcpEngine.Inst().getARRtcpOption().setMediaType(mediaType);
+                    if (ARRtcpEngine.Inst().getARRtcpOption().getMediaType() == ARVideoCommon.ARMediaType.Audio) {
+                        nativeSetAuidoModel(true, true);
+                    } else {
+                        nativeSetAuidoModel(false, true);
+                    }
+                    nativeSetDeviceInfo(ARRtcpEngine.Inst().getDeviceInfo());
+                    // We have permission granted to the user
+                    nativePublish(ARRtcpEngine.Inst().getARRtcpOption().getMediaType().type, (int) ((Math.random() * 9 + 1) * 100000) + "", bIsNeedTransform);
+                    ret = 1;
+                } else {
+                    ret = 0;
+                }
                 LooperExecutor.exchange(result, ret);
             }
         });
@@ -589,19 +749,21 @@ public class ARRtcpKit {
     /**
      * 发布视频
      *
-     * @param token
-     * @param bIsNeedTransform
+     * @param token 令牌:客户端向自己服务申请获得，参考企业级安全指南
+     * @param arId 用户自定义字符串， 整个系统保持唯一，可通过arId查询频道信息
+     * @param mediaType 发布媒体类型
+     * @param bIsNeedTransform 是否需要转码
      * @return
      */
-    public int publishByToken(final String token, final ARVideoCommon.ARMediaType mediaType,final boolean bIsNeedTransform) {
+    public int publishByToken(final String token, final String arId, final ARVideoCommon.ARMediaType mediaType, final boolean bIsNeedTransform) {
         final Exchanger<Integer> result = new Exchanger<Integer>();
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 int ret = 0;
-//                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
-//                if (permission == PackageManager.PERMISSION_GRANTED) {
-                    if (null!=token&&!token.equals("")) {
+                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
+                if (permission == PackageManager.PERMISSION_GRANTED) {
+                    if (null != token && !token.equals("")) {
                         nativeSetUserToken(token);
                     }
                     ARRtcpEngine.Inst().getARRtcpOption().setMediaType(mediaType);
@@ -612,18 +774,16 @@ public class ARRtcpKit {
                     }
                     nativeSetDeviceInfo(ARRtcpEngine.Inst().getDeviceInfo());
                     // We have permission granted to the user
-                    nativePublish(ARRtcpEngine.Inst().getARRtcpOption().getMediaType().type, (int)((Math.random()*9+1)*100000)+"", bIsNeedTransform);
+                    nativePublish(ARRtcpEngine.Inst().getARRtcpOption().getMediaType().type, arId, bIsNeedTransform);
                     ret = 1;
-//                } else {
-//                    ret = 0;
-//                }
-
+                } else {
+                    ret = 0;
+                }
                 LooperExecutor.exchange(result, ret);
             }
         });
         return LooperExecutor.exchange(result, 0);
     }
-
 
     /**
      * 发布摄像头的视频流
@@ -663,9 +823,42 @@ public class ARRtcpKit {
     }
 
     /**
+     * 监听房间号
+     * @param arId 房间号
+     * @return 发布结果；0/1:监听失败/监听成功
+     */
+    public int listen(final String arId) {
+        final Exchanger<Integer> result = new Exchanger<Integer>();
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                nativeListenIt(arId);
+                LooperExecutor.exchange(result, 1);
+            }
+        });
+        return LooperExecutor.exchange(result, 0);
+    }
+
+    /**
+     * 取消监听房间号
+     * @param arId 房间号
+     * @return 发布结果；0/1:监听失败/监听成功
+     */
+    public int unListen(final String arId) {
+        final Exchanger<Integer> result = new Exchanger<Integer>();
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                nativeUnListen(arId);
+                LooperExecutor.exchange(result, 1);
+            }
+        });
+        return LooperExecutor.exchange(result, 0);
+    }
+    /**
      * 订阅视频
      *
-     * @param rtcpId 发布的anyRTCid
+     * @param rtcpId 发布的rtcpId
      * @return 订阅结果；0/1:订阅失败（没有RECORD_AUDIO权限）/订阅成功
      */
     public int subscribe(final String rtcpId, final String token) {
@@ -674,18 +867,18 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 int ret = 0;
-//                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
-//                if (permission == PackageManager.PERMISSION_GRANTED) {
-                    if (null!=token&&!token.equals("")) {
+                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
+                if (permission == PackageManager.PERMISSION_GRANTED) {
+                    if (null != token && !token.equals("")) {
                         nativeSetUserToken(token);
                     }
                     nativeSetDeviceInfo(ARRtcpEngine.Inst().getDeviceInfo());
                     // We have permission granted to the user
                     nativeSubscribe(rtcpId);
                     ret = 1;
-//                } else {
-//                    ret = 0;
-//                }
+                } else {
+                    ret = 0;
+                }
 
                 LooperExecutor.exchange(result, ret);
             }
@@ -703,6 +896,61 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 nativeUnSubscribe(rtcpId);
+            }
+        });
+    }
+
+    /**
+     * 自定义视频数据接入时，本地显示
+     * @param lRender 底层图像地址
+     */
+    public void setLocalVideoRender(final long lRender) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                nativeSetLocalVideoRender(lRender);
+            }
+        });
+    }
+
+    /**
+     * 按照旋转角度显示渲染本地之定义视频数据
+     * @param lRender 底层图像地址
+     * @param rotation ARVideoRotation 视频的角度
+     */
+    public void setLocalVideoRotationRender(final long lRender, final ARVideoCommon.ARVideoRotation rotation) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                nativeSetLocalVideoRotationRender(lRender, rotation.rotation);
+            }
+        });
+    }
+
+
+    /**
+     * 自定义视频数据接入时，本地辐流显示
+     * @param lRender 底层图像地址
+     */
+    public void setLocalVideoExRender(final long lRender) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                nativeSetLocalVideoExRender(lRender);
+            }
+        });
+    }
+
+    /**
+     * 按照旋转角度显示渲染本地之定义视频数据
+     * @param lRender 底层图像地址
+     * @param rotation ARVideoRotation 视频的角度
+     */
+    public void setLocalVideoExRotationRender(final long lRender, final ARVideoCommon.ARVideoRotation rotation) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                nativeSetLocalVideoExRotationRender(lRender, rotation.rotation);
             }
         });
     }
@@ -738,13 +986,37 @@ public class ARRtcpKit {
     }
 
     /**
+     * 外部yuv数据
+     * @param p_yuv
+     * @param width
+     * @param height
+     * @param rotation
+     * @return -1:分辨率或者塞流模式不正确，0：设置成功；
+     */
+    public int setVideoYUV420PRotationData(byte[] p_yuv, int width, int height, ARVideoCommon.ARVideoRotation rotation) {
+        return nativeSetYUV420PRotationData(p_yuv, width, height, rotation.rotation);
+    }
+
+    /**
+     * 辐流外部yuv数据
+     * @param p_yuv
+     * @param width
+     * @param height
+     * @param rotation
+     * @return -1:分辨率或者塞流模式不正确，0：设置成功；
+     */
+    public int setVideoExYUV420PRotationData(byte[] p_yuv, int width, int height, ARVideoCommon.ARVideoRotation rotation) {
+        return nativeSetExYUV420PRotationData(p_yuv, width, height, rotation.rotation);
+    }
+
+    /**
      * 外部rgb数据
      * @param p_rgb
      * @param width
      * @param height
      * @return -1:分辨率或者塞流模式不正确，0：设置成功；
      */
-    public int setVideoRGB565Data(byte[] p_rgb, int width, int height) {
+    private int setVideoRGB565Data(byte[] p_rgb, int width, int height) {
         return nativeSetVideoRGB565Data(p_rgb, width, height);
     }
 
@@ -764,11 +1036,31 @@ public class ARRtcpKit {
         nativeSetVideoH264Data(data, length);
     }
 
+    /**
+     * 渲染远端视频
+     * @param rtcpId
+     * @param render
+     */
     public void setRemoteVideoRender(final String rtcpId, final long render) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 nativeSetRTCVideoRender(rtcpId, render);
+            }
+        });
+    }
+
+    /**
+     * 按照指定角度渲染远端视频
+     * @param rtcpId
+     * @param render
+     * @param rotation ARVideoRotation 视频的角度
+     */
+    public void setRemoteVideoRotationRender(final String rtcpId, final long render, final ARVideoCommon.ARVideoRotation rotation) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                nativeSetRTCVideoRotationRender(rtcpId, render, rotation.rotation);
             }
         });
     }
@@ -809,7 +1101,7 @@ public class ARRtcpKit {
      *
      * @return
      */
-    public long getAnyrtcUvcCallabck() {
+    public long getUVCCallabck() {
         return nativeGetAnyrtcUvcCallabck();
     }
 
@@ -866,16 +1158,24 @@ public class ARRtcpKit {
 
     private native void nativeSetLocalPeerVideoEnable(String strRtcpId, boolean bVideoEnable);
 
-    private native void nativeSetVideoCapturer(VideoCapturer capturer, long nativeRenderer);
+    private native void nativeSetVideoCapturer(Object capturer, long nativeRenderer);
 
-    private native void nativeSetVideoCapturerEx(VideoCapturer capturer, long nativeRenderer);
+    private native void nativeSetVideoCapturerEx(Object capturer, long nativeRenderer);
+
+    private native void nativeSetLocalVideoRender(long nativeRenderer);
+
+    private native void nativeSetLocalVideoRotationRender(long nativeRenderer, int rotation);
+
+    private native void nativeSetLocalVideoExRender(long nativeRenderer);
+
+    private native void nativeSetLocalVideoExRotationRender(long nativeRenderer, int rotation);
 
     private native void nativeSetVideoSize(int width, int height);
 
     private native void nativeSetVideoMode(int nVideoMode);
 
     /**
-     * 此接口仅使用AnyRTCVideoQualityMode枚举类型
+     * 此接口仅使用VideoQualityMode枚举类型
      *
      * @param nVideoMode
      */
@@ -898,7 +1198,7 @@ public class ARRtcpKit {
     private native void nativeSetExVideoMode(int nVideoMode);
 
     /**
-     * 此接口仅使用AnyRTCVideoQualityMode枚举类型
+     * 此接口仅使用VideoQualityMode枚举类型
      *
      * @param nVideoMode
      */
@@ -919,9 +1219,15 @@ public class ARRtcpKit {
 
     private native void nativeSetUserInfo(String strUserid, String strUserData);
 
-    private native void nativePublish(int mType, String anyRTCId, boolean bLive);
+    private native void nativeSetAudioNeedPcm(boolean enable);
+
+    private native void nativePublish(int mType, String arId, boolean bLive);
 
     private native void nativeUnPublish();
+
+    private native void nativeListenIt(String arId);
+
+    private native void nativeUnListen(String arId);
 
     private native void nativePublishEx();
 
@@ -933,9 +1239,13 @@ public class ARRtcpKit {
 
     private native void nativeSetExternalCameraCapturer(boolean enable, int type);
 
-    private native int nativeSetYUV420PData(byte[] p_rgb, int width, int height);
+    private native int nativeSetYUV420PData(byte[] p_yuv, int width, int height);
 
     private native int nativeSetVideoYUV420PData(byte[] y, int stride_y, byte[] u, int stride_u, byte[] v, int stride_v, int width, int height);
+
+    private native int nativeSetYUV420PRotationData(byte[] p_yuv, int width, int height, int rotation);
+
+    private native int nativeSetExYUV420PRotationData(byte[] p_yuv, int width, int height, int rotation);
 
     private native int nativeSetVideoRGB565Data(byte[] p_rgb, int width, int height);
 
@@ -944,6 +1254,8 @@ public class ARRtcpKit {
     private native void nativeSetVideoH264Data(byte[] data, int length);
 
     private native void nativeSetRTCVideoRender(String strRtcpId, long nativeRenderer);
+
+    private native void nativeSetRTCVideoRotationRender(String strRtcpId, long nativeRenderer, int rotation);
 
     private native void nativeDestroy();
 
@@ -1016,6 +1328,17 @@ public class ARRtcpKit {
         public void OnRtcCloseAudioTrack(String rtcpId, String userId) {
             if (null != rtcpEvent) {
                 rtcpEvent.onRTCCloseRemoteAudioTrack(rtcpId);
+            }
+        }
+
+        @Override
+        public void OnRtcAudioPcmData(String strRtcpId, byte[] data, int nLen, int nSampleHz, int nChannel) {
+            if (null != rtcpEvent) {
+                if(strRtcpId.equals("localAudio")) {
+                    rtcpEvent.onRTCLocalAudioPcmData(strRtcpId, data, nLen, nSampleHz, nChannel);
+                } else {
+                    rtcpEvent.onRTCRemoteAudioPcmData(strRtcpId, data, nLen, nSampleHz, nChannel);
+                }
             }
         }
 

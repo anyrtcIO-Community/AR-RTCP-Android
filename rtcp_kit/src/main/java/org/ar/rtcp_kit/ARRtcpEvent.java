@@ -49,6 +49,10 @@ public abstract class ARRtcpEvent {
 
     public abstract void onRTCRemoteAVStatus(String rtcpId, boolean bAudio, boolean bVideo);
 
+    public abstract void onRTCLocalAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel);
+
+    public abstract void onRTCRemoteAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel);
+
     public abstract void onRTCRemoteAudioActive(String rtcpId, int nLevel, int nTime);
 
     public abstract void onRTCLocalAudioActive( int nLevel, int nTime);

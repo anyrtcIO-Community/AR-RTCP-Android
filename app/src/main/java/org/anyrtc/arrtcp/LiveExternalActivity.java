@@ -37,15 +37,14 @@ import com.yanzhenjie.permission.runtime.Permission;
 import org.anyrtc.arrtcp.zxing.ScanActivity;
 import org.anyrtc.arrtcp.zxing.utils.CustomDialog;
 import org.anyrtc.arrtcp.zxing.utils.QRCode;
-import org.anyrtc.common.utils.AnyRTCAudioManager;
+import org.ar.common.enums.ARCaptureType;
 import org.ar.common.enums.ARNetQuality;
 import org.ar.common.enums.ARVideoCommon;
-import org.ar.rtcp_kit.ARCaptureType;
+import org.ar.common.utils.AR_AudioManager;
 import org.ar.rtcp_kit.ARRtcpEngine;
 import org.ar.rtcp_kit.ARRtcpEvent;
 import org.ar.rtcp_kit.ARRtcpKit;
 import org.ar.rtcp_kit.ARRtcpOption;
-import org.webrtc.VideoCapturer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -66,7 +65,7 @@ public class LiveExternalActivity extends BaseActivity implements View.OnClickLi
     RecyclerView rvLogList;
     private String strPeerId = "";
     boolean isPublish;
-    private AnyRTCAudioManager mRtcAudioManager = null;
+    private AR_AudioManager mRtcAudioManager = null;
     private CustomDialog customDialog;
     List<String> rtcpIDList = new ArrayList<>();
     LogAdapter logAdapter;
@@ -131,7 +130,7 @@ public class LiveExternalActivity extends BaseActivity implements View.OnClickLi
         } else {
             btnScan.setVisibility(View.VISIBLE);
         }
-        mRtcAudioManager = AnyRTCAudioManager.create(this, new Runnable() {
+        mRtcAudioManager = AR_AudioManager.create(this, new Runnable() {
             @Override
             public void run() {
                 onAudioManagerChangedState();
@@ -149,7 +148,7 @@ public class LiveExternalActivity extends BaseActivity implements View.OnClickLi
         ARRtcpOption anyRTCRTCPOption = ARRtcpEngine.Inst().getARRtcpOption();
         //设置前后置摄像头 视频横竖屏 视频质量 视频图像排列方式 发布媒体类型
         anyRTCRTCPOption.setOptionParams(true, ARVideoCommon.ARVideoOrientation.Landscape,
-                ARVideoCommon.ARVideoProfile.ARVideoProfile480x640, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps10);
+                ARVideoCommon.ARVideoProfile.ARVideoProfile1080x1920, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps10);
         //获取RTCP对象
         rtcpKit = RtcpCore.Inst().getmRtcpKit();
         //设置回调监听
@@ -159,30 +158,25 @@ public class LiveExternalActivity extends BaseActivity implements View.OnClickLi
 //            rtcpKit.setLocalVideoCapturer(videoView.openLocalVideoRender().GetRenderPointer());
             //是否使用ARCamera进行本地显示， 如果设置为false，且不调用setByteBufferFrameCaptured方法的情况下，本地无视频显示
 //            rtcpKit.setUsedARCamera(false);
-            rtcpKit.setARCameraCaptureObserver(new VideoCapturer.ARCameraCapturerObserver() {
-
-                @Override
-                public void onByteBufferFrameCaptured(byte[] data, int width, int height, int rotation, long timeStamp) {
-//                    Log.e("LiveActivity", "[AR] " + data.toString());
-//                    Log.e("LiveActivity", "[AR] width: " + width);
-//                    Log.e("LiveActivity", "[AR] height: " + height);
-//                    Log.e("LiveActivity", "[AR] rotation: " + rotation);
-//                    Log.e("LiveActivity", "[AR] timeStamp: " + timeStamp);
-
-                    //数据塞回底层进行本地显示（如果没有设置setUsedARCamera(false)，不需要调用此方法）
-//                    rtcpKit.setByteBufferFrameCaptured(data, width, height, rotation, timeStamp);
-                }
-            });
+//            rtcpKit.setARCameraCaptureObserver(new VideoCapturer.ARCameraCapturerObserver() {
+//
+//                @Override
+//                public void onByteBufferFrameCaptured(byte[] data, int width, int height, int rotation, long timeStamp) {
+////                    Log.e("LiveActivity", "[AR] " + data.toString());
+////                    Log.e("LiveActivity", "[AR] width: " + width);
+////                    Log.e("LiveActivity", "[AR] height: " + height);
+////                    Log.e("LiveActivity", "[AR] rotation: " + rotation);
+////                    Log.e("LiveActivity", "[AR] timeStamp: " + timeStamp);
+//
+//                    //数据塞回底层进行本地显示（如果没有设置setUsedARCamera(false)，不需要调用此方法）
+////                    rtcpKit.setByteBufferFrameCaptured(data, width, height, rotation, timeStamp);
+//                }
+//            });
 
             /**
              * 设置使用外部数据采集
              */
             rtcpKit.setExternalCameraCapturer(true, ARCaptureType.YUV420P);
-            /**
-             * 设置使用外部264编码模式
-             */
-//            rtcpKit.setExH264Capturer(true);
-
             //发布
             rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video);
 //            rtcpKit.setLocalAudioEnable(false);
@@ -205,7 +199,6 @@ public class LiveExternalActivity extends BaseActivity implements View.OnClickLi
         }
         */
     }
-
 
     private void startcamera(Camera mCamera) {
         if (mCamera != null) {
@@ -278,30 +271,11 @@ public class LiveExternalActivity extends BaseActivity implements View.OnClickLi
         return c; // returns null if camera is unavailable
     }
 
-
-    private AvcEncoder.OutPutCallback mCallback = new AvcEncoder.OutPutCallback() {
-        @Override
-        public void callback(byte[] data) {
-//            decode(data);
-//            rtcpKit.setVideoH264Data(data, data.length);
-//            Log.e("AVEncoder", "data:  " + data.length);
-//            Log.e("AVEncoder", "data[0]:  " + data[0]);
-//            Log.e("AVEncoder", "data[1]:  " + data[1]);
-//            Log.e("AVEncoder", "data[2]:  " + data[2]);
-//            Log.e("AVEncoder", "data[3]:  " + data[3]);
-//            Log.e("AVEncoder", "data[4]:  " + data[4]);
-        }
-    };
-
-
     private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             camera = getBackCamera(false);
             startcamera(camera);
-//            avcCodec = new AvcEncoder(width, height, 15, 512*1024);
-//            avcCodec.setmCallback(mCallback);
-//            avcCodec.StartEncoderThread();
         }
 
         @Override
@@ -316,18 +290,9 @@ public class LiveExternalActivity extends BaseActivity implements View.OnClickLi
                 camera.stopPreview();
                 camera.release();
                 camera = null;
-//                avcCodec.StopThread();
             }
         }
     };
-
-
-    public void putYUVData(byte[] buffer, int length) {
-        if (AvcEncoder.YUVQueue.size() >= 10) {
-            AvcEncoder.YUVQueue.poll();
-        }
-        AvcEncoder.YUVQueue.add(buffer);
-    }
 
     private Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
         @Override
@@ -339,7 +304,8 @@ public class LiveExternalActivity extends BaseActivity implements View.OnClickLi
              * 塞入相机采集数据， 视频的分辨率必须和配置时的分辨率一致， 如果配置时为竖屏的480*640，此处必须为480*640
              * 如果配置使用横屏的480*640，此处必须是640*480，setVideoRGB565Data接口与此接口相同
              */
-            rtcpKit.setVideoYUV420PData(nv21ToI420(data, width, height), width, height);
+            int result = rtcpKit.setVideoYUV420PData(nv21ToI420(data, width, height), width, height);
+            Log.e(this.getClass().toString(), "setVideoYUV420PData Result:   " + result);
         }
     };
 
@@ -552,6 +518,16 @@ public class LiveExternalActivity extends BaseActivity implements View.OnClickLi
                     logAdapter.addData("回调：onRTCRemoteAVStatus rtcpId=" + rtcpId + "audio=" + bAudio + "video=" + bVideo);
                 }
             });
+        }
+
+        @Override
+        public void onRTCLocalAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel) {
+
+        }
+
+        @Override
+        public void onRTCRemoteAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel) {
+
         }
 
         @Override

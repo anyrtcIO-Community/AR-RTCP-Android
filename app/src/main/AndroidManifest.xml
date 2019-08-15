@@ -30,6 +30,7 @@
         <activity android:name=".LiveActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".LiveExternalActivity" />
+        <activity android:name=".LiveScreenActivity" />
         <activity android:name=".MediaCodecExtraActivity">
         </activity>
         <activity

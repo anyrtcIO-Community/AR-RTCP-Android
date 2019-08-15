@@ -36,18 +36,21 @@ public class MediaCodecExtraActivity extends AppCompatActivity implements Surfac
 
 //    String path = Environment.getExternalStorageDirectory() + "/easy.h264";
 
-    int width = 640, height = 480;
-    int framerate, bitrate;
-    int mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
-    MediaCodec mMediaCodec;
-    SurfaceView surfaceView;
-    SurfaceHolder surfaceHolder;
-    Camera mCamera;
-    NV21Convertor mConvertor;
-    Button btnSwitch;
-    boolean started = false;
+    private Button btnSwitch;
+    private SurfaceView surfaceView;
 
-    ARRtcpKit rtcpKit;
+    private int width = 640, height = 480;
+    private int framerate, bitrate;
+
+    private int mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
+
+    private MediaCodec mMediaCodec;
+    private SurfaceHolder surfaceHolder;
+    private Camera mCamera;
+    private NV21Convertor mConvertor;
+    private boolean started = false;
+
+    private ARRtcpKit rtcpKit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,17 +70,17 @@ public class MediaCodecExtraActivity extends AppCompatActivity implements Surfac
         //获取配置类
         ARRtcpOption anyRTCRTCPOption = ARRtcpEngine.Inst().getARRtcpOption();
         //设置前后置摄像头 视频横竖屏 视频质量 视频图像排列方式 发布媒体类型
-        anyRTCRTCPOption.setOptionParams(true, ARVideoCommon.ARVideoOrientation.Portrait,
-                ARVideoCommon.ARVideoProfile.ARVideoProfile480x640, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps15);
+        anyRTCRTCPOption.setOptionParams(true, ARVideoCommon.ARVideoOrientation.Landscape,
+                ARVideoCommon.ARVideoProfile.ARVideoProfile480x640, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps10);
         //获取RTCP对象
         rtcpKit = RtcpCore.Inst().getmRtcpKit();
         //设置回调监听
         rtcpKit.setRtcpEvent(arRtcpEvent);
+        //设置开启使用264编码数据
         rtcpKit.setExH264Capturer(true);
         //发布
         rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video);
     }
-
 
     ARRtcpEvent arRtcpEvent = new ARRtcpEvent() {
         @Override
@@ -136,6 +139,16 @@ public class MediaCodecExtraActivity extends AppCompatActivity implements Surfac
         }
 
         @Override
+        public void onRTCLocalAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel) {
+
+        }
+
+        @Override
+        public void onRTCRemoteAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel) {
+
+        }
+
+        @Override
         public void onRTCRemoteAudioActive(String rtcpId, int nLevel, int nTime) {
 
         }
@@ -156,10 +169,15 @@ public class MediaCodecExtraActivity extends AppCompatActivity implements Surfac
         }
     };
 
+    /**
+     * 初始化编码器
+     */
     private void initMediaCodec() {
         int dgree = getDgree();
-        framerate = 15;
-        bitrate = 2 * width * height * framerate / 20;
+        framerate = 10;
+//        bitrate = 2 * width * height * framerate / 20;
+
+        bitrate = 512 * 1024;
         EncoderDebugger debugger = EncoderDebugger.debug(getApplicationContext(), width, height);
         mConvertor = debugger.getNV21Convertor();
         try {
@@ -183,7 +201,12 @@ public class MediaCodecExtraActivity extends AppCompatActivity implements Surfac
         }
     }
 
-    public static int[] determineMaximumSupportedFramerate(Camera.Parameters parameters) {
+    /**
+     * 获取相机的最大帧率范围
+     * @param parameters
+     * @return
+     */
+    private int[] determineMaximumSupportedFramerate(Camera.Parameters parameters) {
         int[] maxFps = new int[]{0, 0};
         List<int[]> supportedFpsRanges = parameters.getSupportedPreviewFpsRange();
         for (Iterator<int[]> it = supportedFpsRanges.iterator(); it.hasNext(); ) {
@@ -195,7 +218,12 @@ public class MediaCodecExtraActivity extends AppCompatActivity implements Surfac
         return maxFps;
     }
 
-    private boolean ctreateCamera(SurfaceHolder surfaceHolder) {
+    /**
+     * 打开相机
+     * @param surfaceHolder
+     * @return
+     */
+    private boolean openCamera(SurfaceHolder surfaceHolder) {
         try {
             mCamera = Camera.open(mCameraId);
             Camera.Parameters parameters = mCamera.getParameters();
@@ -208,12 +236,12 @@ public class MediaCodecExtraActivity extends AppCompatActivity implements Surfac
             parameters.setPreviewFormat(ImageFormat.NV21);
             List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             parameters.setPreviewSize(width, height);
-            parameters.setPreviewFpsRange(max[0], max[1]);
+//            parameters.setPreviewFpsRange(max[0], max[1]);
             mCamera.setParameters(parameters);
 //            mCamera.autoFocus(null);
             int displayRotation;
             displayRotation = (cameraRotationOffset - getDgree() + 360) % 360;
-            mCamera.setDisplayOrientation(displayRotation);
+            mCamera.setDisplayOrientation(90);
             mCamera.setPreviewDisplay(surfaceHolder);
             return true;
         } catch (Exception e) {
@@ -231,7 +259,7 @@ public class MediaCodecExtraActivity extends AppCompatActivity implements Surfac
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         surfaceHolder = holder;
-        ctreateCamera(surfaceHolder);
+        openCamera(surfaceHolder);
         startPreview();
     }
 
@@ -246,7 +274,8 @@ public class MediaCodecExtraActivity extends AppCompatActivity implements Surfac
         destroyCamera();
     }
 
-    Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
+    private Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
+
         byte[] mPpsSps = new byte[0];
 
         @Override
@@ -254,70 +283,71 @@ public class MediaCodecExtraActivity extends AppCompatActivity implements Surfac
             if (data == null) {
                 return;
             }
-            ByteBuffer[] inputBuffers = mMediaCodec.getInputBuffers();
-            ByteBuffer[] outputBuffers = mMediaCodec.getOutputBuffers();
-            byte[] dst = new byte[data.length];
-            Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
-            if (getDgree() == 0) {
-                dst = Util.rotateNV21Degree90(data, previewSize.width, previewSize.height);
-            } else {
-                dst = data;
-            }
-            try {
-                int bufferIndex = mMediaCodec.dequeueInputBuffer(5000000);
-                if (bufferIndex >= 0) {
-                    inputBuffers[bufferIndex].clear();
-                    mConvertor.convert(dst, inputBuffers[bufferIndex]);
-                    mMediaCodec.queueInputBuffer(bufferIndex, 0,
-                            inputBuffers[bufferIndex].position(),
-                            System.nanoTime() / 1000, 0);
-                    MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
-                    int outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 0);
-                    while (outputBufferIndex >= 0) {
-                        ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
-                        byte[] outData = new byte[bufferInfo.size];
-                        outputBuffer.get(outData);
-                        //记录pps和sps
-                        if (outData[0] == 0 && outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && outData[4] == 103) {
-                            //arm 和mips平台 pps和sps
-                            mPpsSps = outData;
-                        } else if (outData[0] == 0 && outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && outData[4] == 101) {
-                            //在关键帧前面加上pps和sps数据  arm和mips平台 pps和sps
-                            byte[] iframeData = new byte[mPpsSps.length + outData.length];
-                            System.arraycopy(mPpsSps, 0, iframeData, 0, mPpsSps.length);
-                            System.arraycopy(outData, 0, iframeData, mPpsSps.length, outData.length);
-                            outData = iframeData;
-                        } else if (outData[0] == 0 && outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && outData[4] == 39) {
-                            //x86平台 pps和sps
-                            mPpsSps = outData;
-                        } else if (outData[0] == 0 && outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && outData[4] == 37) {
-                            //在关键帧前面加上pps和sps数据 x86平台
-                            byte[] iframeData = new byte[mPpsSps.length + outData.length];
-                            System.arraycopy(mPpsSps, 0, iframeData, 0, mPpsSps.length);
-                            System.arraycopy(outData, 0, iframeData, mPpsSps.length, outData.length);
-                            outData = iframeData;
-                        }
+                ByteBuffer[] inputBuffers = mMediaCodec.getInputBuffers();
+                ByteBuffer[] outputBuffers = mMediaCodec.getOutputBuffers();
+                byte[] dst = new byte[data.length];
+                Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
+                if (getDgree() == 0) {
+                    dst = Util.rotateNV21Degree90(data, previewSize.width, previewSize.height);
+                } else {
+                    dst = data;
+                }
+                try {
+                    int bufferIndex = mMediaCodec.dequeueInputBuffer(5000000);
+                    if (bufferIndex >= 0) {
+                        inputBuffers[bufferIndex].clear();
+                        mConvertor.convert(dst, inputBuffers[bufferIndex]);
+                        mMediaCodec.queueInputBuffer(bufferIndex, 0,
+                                inputBuffers[bufferIndex].position(),
+                                System.nanoTime() / 1000, 0);
+                        MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+                        int outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 0);
+                        while (outputBufferIndex >= 0) {
+                            ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
+                            byte[] outData = new byte[bufferInfo.size];
+                            outputBuffer.get(outData);
+                            //记录pps和sps
+                            if (outData[0] == 0 && outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && outData[4] == 103) {
+                                //arm 和mips平台 pps和sps
+                                mPpsSps = outData;
+                            } else if (outData[0] == 0 && outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && outData[4] == 101) {
+                                //在关键帧前面加上pps和sps数据  arm和mips平台 pps和sps
+                                byte[] iframeData = new byte[mPpsSps.length + outData.length];
+                                System.arraycopy(mPpsSps, 0, iframeData, 0, mPpsSps.length);
+                                System.arraycopy(outData, 0, iframeData, mPpsSps.length, outData.length);
+                                outData = iframeData;
+                            } else if (outData[0] == 0 && outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && outData[4] == 39) {
+                                //x86平台 pps和sps
+                                mPpsSps = outData;
+                            } else if (outData[0] == 0 && outData[1] == 0 && outData[2] == 0 && outData[3] == 1 && outData[4] == 37) {
+                                //在关键帧前面加上pps和sps数据 x86平台
+                                byte[] iframeData = new byte[mPpsSps.length + outData.length];
+                                System.arraycopy(mPpsSps, 0, iframeData, 0, mPpsSps.length);
+                                System.arraycopy(outData, 0, iframeData, mPpsSps.length, outData.length);
+                                outData = iframeData;
+                            }
+                            //保存264文件
 //                        Util.save(outData, 0, outData.length, path, true);
 
-                        //塞入底层编码后的264数据。
-                        rtcpKit.setVideoH264Data(outData, outData.length);
+                            //塞入底层编码后的264数据。
+                            rtcpKit.setVideoH264Data(outData, outData.length);
 
-                        mMediaCodec.releaseOutputBuffer(outputBufferIndex, false);
-                        outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 0);
+                            mMediaCodec.releaseOutputBuffer(outputBufferIndex, false);
+                            outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 0);
+                        }
+                    } else {
+                        Log.e("easypusher", "No buffer available !");
                     }
-                } else {
-                    Log.e("easypusher", "No buffer available !");
+                } catch (Exception e) {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+                    String stack = sw.toString();
+                    Log.e("save_log", stack);
+                    e.printStackTrace();
+                } finally {
+                    mCamera.addCallbackBuffer(dst);
                 }
-            } catch (Exception e) {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                String stack = sw.toString();
-                Log.e("save_log", stack);
-                e.printStackTrace();
-            } finally {
-                mCamera.addCallbackBuffer(dst);
-            }
         }
 
     };
@@ -367,6 +397,10 @@ public class MediaCodecExtraActivity extends AppCompatActivity implements Surfac
         }
     }
 
+    /**
+     * 获取屏幕方向
+     * @return
+     */
     private int getDgree() {
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;

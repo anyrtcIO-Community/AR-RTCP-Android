@@ -75,7 +75,7 @@
                     android:layout_alignParentTop="true"
                     android:background="@drawable/qrcode_line" />
 
-                <org.ar.arrtcp.zxing.MyImageView
+                <org.anyrtc.arrtcp.zxing.MyImageView
                     android:id="@+id/scan_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />

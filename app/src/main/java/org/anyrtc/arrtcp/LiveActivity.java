@@ -32,7 +32,7 @@ import com.yanzhenjie.permission.runtime.Permission;
 import org.anyrtc.arrtcp.zxing.ScanActivity;
 import org.anyrtc.arrtcp.zxing.utils.CustomDialog;
 import org.anyrtc.arrtcp.zxing.utils.QRCode;
-import org.anyrtc.common.utils.AnyRTCAudioManager;
+import org.ar.common.utils.AR_AudioManager;
 import org.ar.common.enums.ARNetQuality;
 import org.ar.common.enums.ARVideoCommon;
 import org.ar.rtcp_kit.ARRtcpEngine;
@@ -60,7 +60,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
     RecyclerView rvLogList;
     private String strPeerId = "";
     boolean isPublish;
-    private AnyRTCAudioManager mRtcAudioManager = null;
+    private AR_AudioManager mRtcAudioManager = null;
     private CustomDialog customDialog;
     List<String> rtcpIDList = new ArrayList<>();
     LogAdapter logAdapter;
@@ -104,12 +104,12 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         isPublish = getIntent().getBooleanExtra("isPublish", false);
         if (isPublish) {
             ibCamera.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             btn_qr_code.setVisibility(View.GONE);
             btnScan.setVisibility(View.VISIBLE);
             ibShare.setVisibility(View.GONE);
         }
-        mRtcAudioManager = AnyRTCAudioManager.create(this, new Runnable() {
+        mRtcAudioManager = AR_AudioManager.create(this, new Runnable() {
             @Override
             public void run() {
                 onAudioManagerChangedState();
@@ -122,10 +122,10 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
          */
 
         //获取配置类
-        ARRtcpOption anyRTCRTCPOption = ARRtcpEngine.Inst().getARRtcpOption();
+        ARRtcpOption aRRTCPOption = ARRtcpEngine.Inst().getARRtcpOption();
         //设置前后置摄像头 视频横竖屏 视频质量 视频图像排列方式 发布媒体类型
-        anyRTCRTCPOption.setOptionParams(true, ARVideoCommon.ARVideoOrientation.Portrait,
-                ARVideoCommon.ARVideoProfile.ARVideoProfile480x640, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps15);
+        aRRTCPOption.setOptionParams(true, ARVideoCommon.ARVideoOrientation.Portrait,
+                ARVideoCommon.ARVideoProfile.ARVideoProfile480x640, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps7);
         //获取RTCP对象
         rtcpKit = RtcpCore.Inst().getmRtcpKit();
         //设置回调监听
@@ -155,6 +155,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
 
 
             //发布
+//            rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video);
             rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video);
             logAdapter.addData("方法：publishByToken");
         } else {
@@ -285,8 +286,8 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                     if (rtcpKit != null) {
                         rtcpKit.setRemoteVideoRender(rtcpId, 0);
                         videoView.removeRemoteRender(rtcpId);
-                        if (videoView.getRemoteVideoSize()==0) {
-                            finishAnimActivity();
+                        if (videoView.getRemoteVideoSize() == 0) {
+//                            finishAnimActivity();
                         }
                     }
                 }
@@ -324,6 +325,17 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                 }
             });
         }
+
+        @Override
+        public void onRTCLocalAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel) {
+
+        }
+
+        @Override
+        public void onRTCRemoteAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel) {
+
+        }
+
 
         @Override
         public void onRTCRemoteAudioActive(final String rtcpId, final int nLevel, final int nTime) {
@@ -372,6 +384,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                     for (int i = 0; i < rtcpIDList.size(); i++) {
                         rtcpKit.unSubscribe(rtcpIDList.get(i));
                     }
+                    rtcpKit.unListen("123456");
                 } else {
                     //取消发布
                     rtcpKit.unPublish();
@@ -415,13 +428,13 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
 
                 break;
             case R.id.btn_scan:
-                if (rtcpIDList.size()==2){
+                if (rtcpIDList.size() == 2) {
                     Toast.makeText(LiveActivity.this, "DEMO演示，仅展示订阅两路流", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Intent i=new Intent(this,ScanActivity.class);
-                i.putExtra("isFirstScan",false);
-                startActivityForResult(i,100);
+                Intent i = new Intent(this, ScanActivity.class);
+                i.putExtra("isFirstScan", false);
+                startActivityForResult(i, 100);
                 break;
             case R.id.ibtn_close_log:
                 rl_log_layout.setVisibility(View.GONE);
@@ -454,7 +467,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                         iv.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View view) {
-                                if (finalBitmapQRCode!=null) {
+                                if (finalBitmapQRCode != null) {
                                     saveImageToGallery(finalBitmapQRCode);
                                 }
                                 return true;

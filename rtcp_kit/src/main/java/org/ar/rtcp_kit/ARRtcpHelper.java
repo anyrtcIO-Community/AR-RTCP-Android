@@ -69,6 +69,8 @@ public interface ARRtcpHelper {
 
     public void OnRtcCloseAudioTrack(String strRtcpId, String strUserId);
 
+    public void OnRtcAudioPcmData(String strRtcpId, byte[] data, int nLen, int nSampleHz, int nChannel);
+
     public void OnRtcAVStatus(String strRtcpId, boolean bAudio, boolean bVideo);
 
     public void OnRtcAudioActive(String strRtcpId, String strUserId, int nLevel, int showtime);
