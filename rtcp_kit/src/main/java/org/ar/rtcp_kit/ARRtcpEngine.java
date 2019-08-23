@@ -105,7 +105,7 @@ public class ARRtcpEngine {
                 context = ctx;
                 ContextUtils.initialize(ctx);
                 nativeInitCtx(ctx, eglBase.getEglBaseContext());
-                nativeInitEngineWithARInfo(strDeveloperId, strAppId, strAESKey, strToken);
+                nativeInitEngineWithARInfo(strDeveloperId, strAppId, strAESKey, strToken, getPackageName());
             }
         });
     }
@@ -119,7 +119,7 @@ public class ARRtcpEngine {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                nativeInitEngineWithAppInfo(appId, token);
+                nativeInitEngineWithAppInfo(appId, token, getPackageName());
             }
         });
     }
@@ -138,7 +138,7 @@ public class ARRtcpEngine {
                 ContextUtils.initialize(ctx);
                 nativeInitCtx(ctx, eglBase.getEglBaseContext());
                 context = ctx;
-                nativeInitEngineWithAppInfo(appId, token);
+                nativeInitEngineWithAppInfo(appId, token, getPackageName());
             }
         });
     }
@@ -215,9 +215,9 @@ public class ARRtcpEngine {
     private static native void nativeInitCtx(Context ctx, EglBase.Context context);
 
     private static native void nativeInitEngineWithARInfo(String strDeveloperId, String strAppId,
-                                                              String strAESKey, String strToken);
+                                                              String strAESKey, String strToken, String strPackage);
 
-    private static native void nativeInitEngineWithAppInfo(String appId, String token);
+    private static native void nativeInitEngineWithAppInfo(String appId, String token, String strPackage);
 
     private static native void nativeConfigServerForPriCloud(String address, int port);
 
