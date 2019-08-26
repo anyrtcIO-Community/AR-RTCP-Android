@@ -86,7 +86,7 @@ public class ARRtcpEngine {
      *
      * @param ctx
      */
-    public void initEngine(final Context ctx) {
+    private void initEngine(final Context ctx) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -97,7 +97,7 @@ public class ARRtcpEngine {
         });
     }
 
-    public void initEngineWithARInfo(final Context ctx, final String strDeveloperId, final String strAppId,
+    private void initEngineWithARInfo(final Context ctx, final String strDeveloperId, final String strAppId,
                                          final String strAESKey, final String strToken) {
         executor.execute(new Runnable() {
             @Override
@@ -115,7 +115,7 @@ public class ARRtcpEngine {
      * @param appId
      * @param token
      */
-    public void initAppInfo(final String appId, final String token) {
+    private void initAppInfo(final String appId, final String token) {
         executor.execute(new Runnable() {
             @Override
             public void run() {

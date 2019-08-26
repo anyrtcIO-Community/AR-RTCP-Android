@@ -449,7 +449,7 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 int ret = 0;
-                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), CAMERA);
+                int permission = ARRtcpEngine.Inst().context().checkCallingOrSelfPermission( CAMERA);
                 if (permission == PackageManager.PERMISSION_GRANTED) {
                     // We don't have permission so prompt the user
                     if (mVideoCapturer == null) {
@@ -495,7 +495,7 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 int ret = 0;
-                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), CAMERA);
+                int permission = ARRtcpEngine.Inst().context().checkCallingOrSelfPermission( CAMERA);
                 if (permission == PackageManager.PERMISSION_GRANTED) {
                     // We don't have permission so prompt the user
                     if (mVideoScreenCapturer == null) {
@@ -550,7 +550,7 @@ public class ARRtcpKit {
             public void run() {
                 bFront = ARRtcpEngine.Inst().getExARRtcpOption().isDefaultFrontCamera();
                 int ret = 0;
-                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), CAMERA);
+                int permission = ARRtcpEngine.Inst().context().checkCallingOrSelfPermission( CAMERA);
                 if (permission == PackageManager.PERMISSION_GRANTED) {
                     // We don't have permission so prompt the user
                     int numberOfCameras = CameraEnumerationAndroid.getDeviceCount();
@@ -643,7 +643,7 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 int ret = 0;
-                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
+                int permission = ARRtcpEngine.Inst().context().checkCallingOrSelfPermission( RECORD_AUDIO);
                 if (permission == PackageManager.PERMISSION_GRANTED) {
                     if (null != token && !token.equals("")) {
                         nativeSetUserToken(token);
@@ -681,7 +681,7 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 int ret = 0;
-                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
+                int permission = ARRtcpEngine.Inst().context().checkCallingOrSelfPermission( RECORD_AUDIO);
                 if (permission == PackageManager.PERMISSION_GRANTED) {
                     if (null != token && !token.equals("")) {
                         nativeSetUserToken(token);
@@ -722,7 +722,7 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 int ret = 0;
-                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
+                int permission = ARRtcpEngine.Inst().context().checkCallingOrSelfPermission( RECORD_AUDIO);
                 if (permission == PackageManager.PERMISSION_GRANTED) {
                     if (null != token && !token.equals("")) {
                         nativeSetUserToken(token);
@@ -761,7 +761,7 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 int ret = 0;
-                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
+                int permission = ARRtcpEngine.Inst().context().checkCallingOrSelfPermission( RECORD_AUDIO);
                 if (permission == PackageManager.PERMISSION_GRANTED) {
                     if (null != token && !token.equals("")) {
                         nativeSetUserToken(token);
@@ -867,7 +867,7 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 int ret = 0;
-                int permission = PermissionChecker.checkSelfPermission(ARRtcpEngine.Inst().context(), RECORD_AUDIO);
+                int permission = ARRtcpEngine.Inst().context().checkCallingOrSelfPermission( RECORD_AUDIO);
                 if (permission == PackageManager.PERMISSION_GRANTED) {
                     if (null != token && !token.equals("")) {
                         nativeSetUserToken(token);

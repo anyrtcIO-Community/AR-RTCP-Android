@@ -11,53 +11,53 @@ public abstract class ARRtcpEvent {
     /** Publish video OK
      * @param rtcpId
      */
-    public abstract void onPublishOK(String rtcpId,String liveInfo);
+    public  void onPublishOK(String rtcpId,String liveInfo){}
 
     /** Publish video Failed
      * @param code
      */
-    public abstract void onPublishFailed(int code, String reason);
+    public  void onPublishFailed(int code, String reason){}
 
-    public abstract void onPublishExOK(String rtcpId, String liveInfo);
+    public  void onPublishExOK(String rtcpId, String liveInfo){}
 
-    public abstract void onPublishExFailed(int code, String strReason);
+    public  void onPublishExFailed(int code, String strReason){}
 
     /** Subscribe video OK
      * @param rtcpId
      */
-    public abstract void onSubscribeOK(String rtcpId);
+    public  void onSubscribeOK(String rtcpId){}
 
     /** Publish video Failed
      * @param rtcpId
      * @param code
      */
-    public abstract void onSubscribeFailed(String rtcpId, int code, String reason);
+    public  void onSubscribeFailed(String rtcpId, int code, String reason){}
 
     /** OnRTCOpenVideoRender
      * @param rtcpId
      */
-    public abstract void onRTCOpenRemoteVideoRender(String rtcpId);
+    public  void onRTCOpenRemoteVideoRender(String rtcpId){}
 
     /** OnRTCCloseVideoRender
      * @param rtcpId
      */
-    public abstract void onRTCCloseRemoteVideoRender(String rtcpId);
+    public  void onRTCCloseRemoteVideoRender(String rtcpId){}
 
-    public abstract void onRTCOpenRemoteAudioTrack(String rtcpId);
+    public  void onRTCOpenRemoteAudioTrack(String rtcpId){}
 
-    public abstract void onRTCCloseRemoteAudioTrack(String rtcpId);
+    public  void onRTCCloseRemoteAudioTrack(String rtcpId){}
 
-    public abstract void onRTCRemoteAVStatus(String rtcpId, boolean bAudio, boolean bVideo);
+    public  void onRTCRemoteAVStatus(String rtcpId, boolean bAudio, boolean bVideo){}
 
-    public abstract void onRTCLocalAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel);
+    public  void onRTCLocalAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel){}
 
-    public abstract void onRTCRemoteAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel);
+    public  void onRTCRemoteAudioPcmData(String peerId, byte[] data, int nLen, int nSampleHz, int nChannel){}
 
-    public abstract void onRTCRemoteAudioActive(String rtcpId, int nLevel, int nTime);
+    public  void onRTCRemoteAudioActive(String rtcpId, int nLevel, int nTime){}
 
-    public abstract void onRTCLocalAudioActive( int nLevel, int nTime);
+    public  void onRTCLocalAudioActive( int nLevel, int nTime){}
 
-    public abstract void onRTCRemoteNetworkStatus(String rtcpId, int nNetSpeed, int nPacketLost, ARNetQuality netQuality);
+    public  void onRTCRemoteNetworkStatus(String rtcpId, int nNetSpeed, int nPacketLost, ARNetQuality netQuality){}
 
-    public abstract void onRTCLocalNetworkStatus(int nNetSpeed, int nPacketLost, ARNetQuality netQuality);
+    public  void onRTCLocalNetworkStatus(int nNetSpeed, int nPacketLost, ARNetQuality netQuality){}
 }
