@@ -384,7 +384,6 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                     for (int i = 0; i < rtcpIDList.size(); i++) {
                         rtcpKit.unSubscribe(rtcpIDList.get(i));
                     }
-                    rtcpKit.unListen("123456");
                 } else {
                     //取消发布
                     rtcpKit.unPublish();
