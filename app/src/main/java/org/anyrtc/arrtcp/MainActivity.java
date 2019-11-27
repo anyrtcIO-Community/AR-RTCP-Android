@@ -2,6 +2,8 @@ package org.anyrtc.arrtcp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -12,11 +14,15 @@ import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
 
 import org.anyrtc.arrtcp.zxing.ScanActivity;
+import org.ar.common.utils.SharePrefUtil;
+import org.ar.rtcp_kit.ARRtcpEngine;
 
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
-
+    private int mSecretNumber = 0;
+    private static final long MIN_CLICK_INTERVAL = 600;
+    private long mLastClickTime;
 
     @Override
     public int getLayoutId() {
@@ -26,6 +32,8 @@ public class MainActivity extends BaseActivity {
     @Override
     public void initView(Bundle savedInstanceState) {
         ImmersionBar.with(this).statusBarDarkFont(true,0.2f).init();
+
+
         findViewById(R.id.tv_open_live).setOnClickListener(new PerfectClickListener() {
             @Override
             protected void onNoDoubleClick(View v){
@@ -72,6 +80,29 @@ public class MainActivity extends BaseActivity {
                     }).start();
                 }
 
+            }
+        });
+
+        findViewById(R.id.tv_title).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long currentClickTime = SystemClock.uptimeMillis();
+                long elapsedTime = currentClickTime - mLastClickTime;
+                mLastClickTime = currentClickTime;
+
+                if (elapsedTime < MIN_CLICK_INTERVAL) {
+                    ++mSecretNumber;
+                    if (9 == mSecretNumber) {
+                        try {
+                          Toast.makeText(MainActivity.this,"进入开发者模式",Toast.LENGTH_SHORT).show();
+                          startAnimActivity(InputDevInfoActivity.class);
+                        } catch (Exception e) {
+                        }
+                        mSecretNumber=0;
+                    }
+                } else {
+                    mSecretNumber = 0;
+                }
             }
         });
 

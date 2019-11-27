@@ -2,17 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.anyrtc.arrtcp">
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-
     <application
         android:name=".ARApplication"
         android:allowBackup="true"
@@ -20,22 +9,32 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".InputDevInfoActivity"></activity>
+        <activity android:name=".Main2Activity" />
         <activity android:name=".MainActivity">
-                <intent-filter>
-                    <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-                    <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity android:name=".LiveActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".LiveActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".LiveExternalActivity" />
         <activity android:name=".LiveScreenActivity" />
-        <activity android:name=".MediaCodecExtraActivity">
-        </activity>
+        <activity android:name=".MediaCodecExtraActivity" />
         <activity
             android:name=".zxing.ScanActivity"
             android:screenOrientation="portrait" />
     </application>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

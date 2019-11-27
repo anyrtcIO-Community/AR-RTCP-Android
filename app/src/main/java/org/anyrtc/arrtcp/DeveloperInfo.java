@@ -9,17 +9,17 @@ public class DeveloperInfo {
      * anyRTC 平台的开发者ID
      */
 
-    public final static String DEVELOPERID = "95878050";
 
     /**
      * anyRTC 平台的appid
      */
     public final static String APPID = "anyrtcy0UkK1PZydLX";
 
-    /**
+    /**anyrtcy0UkK1PZydLX
+     fabf75cfe0090ef495bf628cd7b9270b
+     192.168.1.21
      * anyRTC 平台的appkey
      */
-    public final static String APPKEY = "q50MGCmTkDn/wXBWNY5YjnB54KOzwwV8RoQ02AV6R9Y";
 
     /**
      * anyRTC 平台的apptoken

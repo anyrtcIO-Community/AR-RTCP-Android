@@ -1,5 +1,6 @@
 package org.anyrtc.arrtcp;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,6 +37,7 @@ import org.anyrtc.arrtcp.zxing.utils.QRCode;
 import org.ar.common.utils.AR_AudioManager;
 import org.ar.common.enums.ARNetQuality;
 import org.ar.common.enums.ARVideoCommon;
+import org.ar.common.utils.SharePrefUtil;
 import org.ar.rtcp_kit.ARRtcpEngine;
 import org.ar.rtcp_kit.ARRtcpEvent;
 import org.ar.rtcp_kit.ARRtcpKit;
@@ -64,7 +67,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
     private CustomDialog customDialog;
     List<String> rtcpIDList = new ArrayList<>();
     LogAdapter logAdapter;
-
+    LinearLayout ll_bottom_layout;
     @Override
     public int getLayoutId() {
         return R.layout.activity_live;
@@ -84,6 +87,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         rl_log_layout = findViewById(R.id.rl_log_layout);
         ibtn_log_close = findViewById(R.id.ibtn_close_log);
         btn_log = findViewById(R.id.btn_log);
+        ll_bottom_layout=findViewById(R.id.ll_bottom_layout);
         ibHangUp = (Button) findViewById(R.id.ib_leave);
         ibCamera = (ImageButton) findViewById(R.id.btn_camare);
         ibShare = (ImageButton) findViewById(R.id.btn_share);
@@ -117,6 +121,25 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         });
         mRtcAudioManager.init();
 
+        boolean isDevMode = SharePrefUtil.getBoolean("isDevMode");
+        if (isDevMode) {
+            String appid = SharePrefUtil.getString("appid");
+            String apptoken = SharePrefUtil.getString("apptoken");
+            String ip = SharePrefUtil.getString("ip");
+
+            if (!TextUtils.isEmpty(appid)) {
+                logAdapter.addData(appid);
+            }
+            if (!TextUtils.isEmpty(apptoken)) {
+                logAdapter.addData(apptoken);
+            }
+            if (!TextUtils.isEmpty(ip)) {
+                logAdapter.addData(ip);
+            }else {
+                logAdapter.addData("公网正式环境");
+            }
+        }
+
         /**
          * 视频
          */
@@ -125,14 +148,15 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         ARRtcpOption aRRTCPOption = ARRtcpEngine.Inst().getARRtcpOption();
         //设置前后置摄像头 视频横竖屏 视频质量 视频图像排列方式 发布媒体类型
         aRRTCPOption.setOptionParams(true, ARVideoCommon.ARVideoOrientation.Portrait,
-                ARVideoCommon.ARVideoProfile.ARVideoProfile480x640, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps7);
+                ARVideoCommon.ARVideoProfile.ARVideoProfile720x1280, ARVideoCommon.ARVideoFrameRate.ARVideoFrameRateFps15);
         //获取RTCP对象
         rtcpKit = RtcpCore.Inst().getmRtcpKit();
         //设置回调监听
         rtcpKit.setRtcpEvent(arRtcpEvent);
+        rtcpKit.setFrontCameraMirrorEnable(true);
         //实例化视频窗口管理对象
-        videoView = new ARVideoView(rl_video, ARRtcpEngine.Inst().Egl(), this, false);
-        videoView.setVideoViewLayout(true, Gravity.CENTER, LinearLayout.VERTICAL);
+        videoView = new ARVideoView(rl_video, ARRtcpEngine.Inst().Egl(), this);
+        videoView.setVideoViewLayout(false, Gravity.CENTER, LinearLayout.HORIZONTAL);
         if (isPublish) {//如果是发布
             //设置本地视频采集
             rtcpKit.setLocalVideoCapturer(videoView.openLocalVideoRender().GetRenderPointer());
@@ -156,12 +180,12 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
 
             //发布
 //            rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video);
-            rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video);
+            rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video,true);
             logAdapter.addData("方法：publishByToken");
         } else {
             //订阅媒体
             strPeerId = getIntent().getStringExtra("id");
-            rtcpKit.subscribe(strPeerId, "");
+            rtcpKit.subscribe(strPeerId,"");
             logAdapter.addData("方法：subscribe");
             rtcpIDList.add(strPeerId);
         }
@@ -183,19 +207,32 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         // is active.
         setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
     }
-
+    private boolean copy(String copyStr) {
+        try {
+            //获取剪贴板管理器
+            android.content.ClipboardManager cm = ( android.content.ClipboardManager ) getSystemService(Context.CLIPBOARD_SERVICE);
+            // 创建普通字符型ClipData
+            ClipData mClipData = ClipData.newPlainText("Label", copyStr);
+            // 将ClipData内容放到系统剪贴板里。
+            cm.setPrimaryClip(mClipData);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
     private ARRtcpEvent arRtcpEvent = new ARRtcpEvent() {
         @Override
         public void onPublishOK(final String rtcpId, final String liveInfo) {
             LiveActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.e(this.getClass().toString(), "rtcpid:   " + rtcpId);
+                    Log.e(this.getClass().toString(), "rtcpid:   " + rtcpId+"liveInfo:"+liveInfo);
                     logAdapter.addData("回调：onPublishOK \n rtcpId：" + rtcpId + " liveInfo:" + liveInfo);
                     if (tv_status != null) {
                         strPeerId = rtcpId;
-                        tv_status.setText("发布成功\n直播间ID:" + rtcpId);
+                        tv_status.setText("发布成功\n直播间ID:" + rtcpId+"liveInfo:"+liveInfo);
                     }
+                    copy(liveInfo);
                 }
             });
         }
@@ -270,7 +307,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                 public void run() {
                     logAdapter.addData("回调：onRTCOpenRemoteVideoRender");
                     Log.d(LiveActivity.class.getName(), "OnRTCOpenVideoRender rtcpId=" + rtcpId);
-                    long renderPointer = videoView.subscribeRemoteVideo(rtcpId).GetRenderPointer();
+                    long renderPointer = videoView.openRemoteVideoRender(rtcpId).GetRenderPointer();
                     rtcpKit.setRemoteVideoRender(rtcpId, renderPointer);
                 }
             });
@@ -286,9 +323,6 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
                     if (rtcpKit != null) {
                         rtcpKit.setRemoteVideoRender(rtcpId, 0);
                         videoView.removeRemoteRender(rtcpId);
-                        if (videoView.getRemoteVideoSize() == 0) {
-//                            finishAnimActivity();
-                        }
                     }
                 }
             });
@@ -562,5 +596,18 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             e.printStackTrace();
             Toast.makeText(this, "出错了，请重试", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ll_bottom_layout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (videoView!=null&&ll_bottom_layout!=null) {
+                    videoView.setBottomHeight(ll_bottom_layout.getMeasuredHeight());
+                }
+            }
+        },100);
     }
 }

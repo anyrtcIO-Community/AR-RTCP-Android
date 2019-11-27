@@ -12,11 +12,11 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    repositories{
+    repositories {
         flatDir {
             dirs 'libs'
         }
@@ -37,4 +37,7 @@ dependencies {
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.22'
     compile 'com.android.support:cardview-v7:28.0.0'
     compile project(':rtcp_kit')
+    compile 'com.android.support:design:28.0.0'
+    compile 'com.android.support:support-annotations:28.0.0'
+    compile 'android.arch.lifecycle:extensions:1.1.1'
 }

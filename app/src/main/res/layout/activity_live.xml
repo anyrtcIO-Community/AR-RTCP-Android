@@ -105,18 +105,26 @@
 
 
     </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_bottom_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:paddingBottom="20dp"
+            >
     <Button
         android:id="@+id/ib_leave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="36dp"
+        android:gravity="center"
         android:background="@null"
         android:drawableTop="@drawable/hang_up"
         android:text="挂断"
         android:drawablePadding="12dp"
         android:textColor="#ffffff"/>
+        </LinearLayout>
 
     </RelativeLayout>
     <RelativeLayout
@@ -154,5 +162,6 @@
             android:layout_marginTop="12dp"></android.support.v7.widget.RecyclerView>
 
     </RelativeLayout>
+
 
 </FrameLayout>

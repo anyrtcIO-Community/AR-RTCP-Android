@@ -149,7 +149,7 @@ public class LiveScreenActivity extends BaseActivity implements View.OnClickList
         rtcpKit.setRtcpEvent(arRtcpEvent);
 
         //实例化视频窗口管理对象
-        videoView = new ARVideoView(rl_video, ARRtcpEngine.Inst().Egl(), this, false);
+        videoView = new ARVideoView(rl_video, ARRtcpEngine.Inst().Egl(), this);
         videoView.setVideoViewLayout(true, Gravity.CENTER, LinearLayout.VERTICAL);
         if (isPublish) {//如果是发布
             //设置本地视频采集

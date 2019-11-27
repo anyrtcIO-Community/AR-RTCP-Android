@@ -4,10 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <org.webrtc.SurfaceViewRenderer
+    <org.webrtc.TextureViewRenderer
         android:id="@+id/sv_video_render"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 
     <FrameLayout
         android:id="@+id/fl_video_loading"

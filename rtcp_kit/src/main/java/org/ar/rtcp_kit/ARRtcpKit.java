@@ -449,7 +449,7 @@ public class ARRtcpKit {
             @Override
             public void run() {
                 int ret = 0;
-                int permission = ARRtcpEngine.Inst().context().checkCallingOrSelfPermission( CAMERA);
+                int permission = ARRtcpEngine.Inst().context().checkCallingOrSelfPermission(CAMERA);
                 if (permission == PackageManager.PERMISSION_GRANTED) {
                     // We don't have permission so prompt the user
                     if (mVideoCapturer == null) {
