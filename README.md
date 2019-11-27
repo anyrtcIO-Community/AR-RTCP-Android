@@ -8,9 +8,7 @@ ARRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，�
 
 ### app体验
 
-##### 扫码下载
-![image](https://www.pgyer.com/app/qrcode/so6a)
-##### [点击下载](https://www.pgyer.com/so6a)
+##### [点击下载](https://fir.im/h3u2)
 ##### [WEB在线体验](https://demos.anyrtc.io/ar-rtcp/)
 
 ### SDK集成
@@ -20,7 +18,7 @@ ARRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，�
 
 ```
 dependencies {
-  compile 'org.ar:rtcp_kit:3.0.3'
+  compile 'org.ar:rtcp_kit:3.0.8'
 }
 ```
 
@@ -29,7 +27,7 @@ dependencies {
 <dependency>
   <groupId>org.ar</groupId>
   <artifactId>rtcp_kit</artifactId>
-  <version>3.0.3</version>
+  <version>3.0.8</version>
   <type>pom</type>
 </dependency>
 ```

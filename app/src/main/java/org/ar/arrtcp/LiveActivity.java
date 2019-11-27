@@ -32,9 +32,9 @@ import com.yanzhenjie.permission.runtime.Permission;
 import org.ar.arrtcp.zxing.ScanActivity;
 import org.ar.arrtcp.zxing.utils.CustomDialog;
 import org.ar.arrtcp.zxing.utils.QRCode;
-import org.anyrtc.common.utils.AnyRTCAudioManager;
 import org.ar.common.enums.ARNetQuality;
 import org.ar.common.enums.ARVideoCommon;
+import org.ar.common.utils.ARAudioManager;
 import org.ar.rtcp_kit.ARRtcpEngine;
 import org.ar.rtcp_kit.ARRtcpEvent;
 import org.ar.rtcp_kit.ARRtcpKit;
@@ -46,6 +46,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class LiveActivity extends BaseActivity implements View.OnClickListener {
 
@@ -59,7 +60,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
     RecyclerView rvLogList;
     private String strPeerId = "";
     boolean isPublish;
-    private AnyRTCAudioManager mRtcAudioManager = null;
+    private ARAudioManager mRtcAudioManager = null;
     private CustomDialog customDialog;
     List<String> rtcpIDList=new ArrayList<>();
     LogAdapter logAdapter;
@@ -107,13 +108,13 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             btnScan.setVisibility(View.VISIBLE);
             ibShare.setVisibility(View.GONE);
         }
-        mRtcAudioManager = AnyRTCAudioManager.create(this, new Runnable() {
+        mRtcAudioManager = ARAudioManager.create(this);
+        mRtcAudioManager.start(new ARAudioManager.AudioManagerEvents() {
             @Override
-            public void run() {
-                onAudioManagerChangedState();
+            public void onAudioDeviceChanged(ARAudioManager.AudioDevice selectedAudioDevice, Set<ARAudioManager.AudioDevice> availableAudioDevices) {
+
             }
         });
-        mRtcAudioManager.init();
 
         /**
          * 视频
@@ -454,7 +455,7 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
         videoView.removeLocalVideoRender();//移除视频图像
         rtcpKit.stopCapture();//停止采集
         if (mRtcAudioManager != null) {
-            mRtcAudioManager.close();
+            mRtcAudioManager.stop();
             mRtcAudioManager = null;
         }
     }
