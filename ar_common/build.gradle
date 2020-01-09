@@ -2,48 +2,39 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven'
-version = "3.0.8"
+version = "3.0.5"
+
 android {
-    compileSdkVersion 26
+    compileSdkVersion 25
     buildToolsVersion '27.0.3'
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 26
-        versionCode 22
-        versionName "3.0.8"
-        multiDexEnabled true
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 16
+        versionName "3.0.5"
     }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
-
-uploadArchives{
-    repositories.mavenDeployer{
-        repository(url:uri('D:\\liuxiaozhong\\LocalMaven'))
-        pom.groupId = 'org.ar'
-        pom.artifactId = 'rtcp'
-        pom.version = '3.0.9'
-    }
+//解决 gradlew 构建错误: 编码 GBK的不可映射字符
+tasks.withType(Javadoc) {
+//    options.encoding = "UTF-8"
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
 }
-
-
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
 }
 task javadoc(type: Javadoc) {
-    failOnError false
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-
 }
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
@@ -53,6 +44,16 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
+
+uploadArchives{
+    repositories.mavenDeployer{
+        repository(url:uri('D:\\liuxiaozhong\\LocalMaven'))
+        pom.groupId = 'org.ar'
+        pom.artifactId = 'ar_common'
+        pom.version = '3.0.0'
+    }
+}
+
 //方法1
 def siteUrl = 'https://www.anyrtc.io'      // 项目的主页   这个是说明，可随便填
 def gitUrl = 'https://www.anyrtc.io'      // Git仓库的url  这个是说明，可随便填
@@ -65,7 +66,7 @@ install {
             project {
                 packaging 'aar'
                 // Add your description here
-                name 'anyrtc公共sdk'     //项目描述
+                name 'common sdk'     //项目描述
                 url siteUrl
                 // Set your license
                 licenses {
@@ -99,18 +100,15 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = "ar_dev"
-        name = "rtcp"    //发布到JCenter上的项目名字，必须填写
+        name = "common"    //发布到JCenter上的项目名字，必须填写
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
         publish = true
     }
 }
-
-apply from: 'fat-aar.gradle'
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:26.1.0'
-//    compile 'org.ar:ar_common:3.0.5'
-    embedded project(':ar_common')
+
+    compile "com.android.support:support-core-utils:25.3.1"
 }

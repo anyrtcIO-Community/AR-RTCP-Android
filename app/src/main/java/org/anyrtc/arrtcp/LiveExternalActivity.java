@@ -176,7 +176,7 @@ public class LiveExternalActivity extends BaseActivity implements View.OnClickLi
             /**
              * 设置使用外部数据采集
              */
-            rtcpKit.setExternalCameraCapturer(true, ARCaptureType.YUV420P);
+            rtcpKit.setExternalCameraCapturer(true, ARVideoCommon.ARCaptureType.YUV420P);
             //发布
             rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video);
 //            rtcpKit.setLocalAudioEnable(false);

@@ -36,7 +36,6 @@ import com.yanzhenjie.permission.runtime.Permission;
 import org.anyrtc.arrtcp.zxing.ScanActivity;
 import org.anyrtc.arrtcp.zxing.utils.CustomDialog;
 import org.anyrtc.arrtcp.zxing.utils.QRCode;
-import org.ar.common.enums.ARCaptureType;
 import org.ar.common.enums.ARNetQuality;
 import org.ar.common.enums.ARVideoCommon;
 import org.ar.common.utils.AR_AudioManager;
@@ -175,7 +174,7 @@ public class LiveScreenActivity extends BaseActivity implements View.OnClickList
             /**
              * 设置使用外部数据采集
              */
-            rtcpKit.setExternalCameraCapturer(true, ARCaptureType.YUV420P);
+            rtcpKit.setExternalCameraCapturer(true, ARVideoCommon.ARCaptureType.YUV420P);
             //发布
             rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video);
 //            rtcpKit.setLocalAudioEnable(false);
@@ -224,8 +223,8 @@ public class LiveScreenActivity extends BaseActivity implements View.OnClickList
 
     private int getFrameOrientation() {
         int rotation = getDeviceOrientation();
-        Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
-        if (info.facing == android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK) {
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
             rotation = 360 - rotation;
         }
         if((info.orientation + rotation) % 360 == 180) {

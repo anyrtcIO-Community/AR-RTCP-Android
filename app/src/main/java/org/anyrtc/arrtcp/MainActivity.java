@@ -39,12 +39,12 @@ public class MainActivity extends BaseActivity {
             protected void onNoDoubleClick(View v){
 
                 if (AndPermission.hasPermissions(MainActivity.this, Permission.CAMERA, Permission.RECORD_AUDIO)) {
-                    startAnimActivity(LiveActivity.class, "isPublish", true);
+                    startAnimActivity(LiveScreenActivity.class, "isPublish", true);
                 } else {
                     AndPermission.with(MainActivity.this).runtime().permission(Permission.CAMERA, Permission.RECORD_AUDIO).onGranted(new Action<List<String>>() {
                         @Override
                         public void onAction(List<String> data) {
-                            startAnimActivity(LiveActivity.class, "isPublish", true);
+                            startAnimActivity(LiveScreenActivity.class, "isPublish", true);
                         }
                     }).onDenied(new Action<List<String>>() {
                         @Override

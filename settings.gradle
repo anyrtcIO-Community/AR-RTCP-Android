@@ -1,1 +1,1 @@
-include ':app','rtcp_kit'
+include ':app', 'rtcp_kit', ':ar_common'
