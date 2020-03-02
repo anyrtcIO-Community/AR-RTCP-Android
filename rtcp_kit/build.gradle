@@ -112,5 +112,5 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:26.1.0'
 //    compile 'org.ar:ar_common:3.0.5'
-    embedded project(':ar_common')
+    compile project(':ar_common')
 }

@@ -162,25 +162,26 @@ public class LiveActivity extends BaseActivity implements View.OnClickListener {
             rtcpKit.setLocalVideoCapturer(videoView.openLocalVideoRender().GetRenderPointer());
             //是否使用ARCamera进行本地显示， 如果设置为false，且不调用setByteBufferFrameCaptured方法的情况下，本地无视频显示
 //            rtcpKit.setUsedARCamera(false);
-            rtcpKit.setARCameraCaptureObserver(new VideoCapturer.ARCameraCapturerObserver() {
-
-                @Override
-                public void onByteBufferFrameCaptured(byte[] data, int width, int height, int rotation, long timeStamp) {
-//                    Log.e("LiveActivity", "[AR] " + data.toString());
-//                    Log.e("LiveActivity", "[AR] width: " + width);
-//                    Log.e("LiveActivity", "[AR] height: " + height);
-//                    Log.e("LiveActivity", "[AR] rotation: " + rotation);
-//                    Log.e("LiveActivity", "[AR] timeStamp: " + timeStamp);
-
-                    //数据塞回底层进行本地显示（如果没有设置setUsedARCamera(false)，不需要调用此方法）
-//                    rtcpKit.setByteBufferFrameCaptured(data, width, height, rotation, timeStamp);
-                }
-            });
+//            rtcpKit.setARCameraCaptureObserver(new VideoCapturer.ARCameraCapturerObserver() {
+//
+//                @Override
+//                public void onByteBufferFrameCaptured(byte[] data, int width, int height, int rotation, long timeStamp) {
+////                    Log.e("LiveActivity", "[AR] " + data.toString());
+////                    Log.e("LiveActivity", "[AR] width: " + width);
+////                    Log.e("LiveActivity", "[AR] height: " + height);
+////                    Log.e("LiveActivity", "[AR] rotation: " + rotation);
+////                    Log.e("LiveActivity", "[AR] timeStamp: " + timeStamp);
+//
+//                    //数据塞回底层进行本地显示（如果没有设置setUsedARCamera(false)，不需要调用此方法）
+////                    rtcpKit.setByteBufferFrameCaptured(data, width, height, rotation, timeStamp);
+//                }
+//            });
 
 
             //发布
 //            rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video);
-            rtcpKit.publishByToken("", ARVideoCommon.ARMediaType.Video,true);
+            rtcpKit.publishByToken("", "123456",ARVideoCommon.ARMediaType.Video,true);
+            rtcpKit.listen("123456");
             logAdapter.addData("方法：publishByToken");
         } else {
             //订阅媒体
