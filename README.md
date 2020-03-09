@@ -8,7 +8,7 @@ ARRTCP SDK为您打造实时视频传输体验，支持秒开，集成简单，�
 
 ### app体验
 
-##### [点击下载](https://fir.im/h3u2)
+##### [点击下载](http://download.anyrtc.io/h3u2)
 ##### [WEB在线体验](https://demos.anyrtc.io/ar-rtcp/)
 
 ### SDK集成
